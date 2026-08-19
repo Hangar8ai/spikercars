@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SpikerCars | Dealer Portal</title>
+<meta name="description" content="SpikerCars dealer portal — send your buy list, sell aged units, and track everything in one place.">
+<link rel="icon" href="spikercars-logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,300;0,400;0,500;0,600;0,700;1,700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<header class="site"><div class="wrap">
+  <a href="index.html"><img src="spikercars-logo.png" alt="SpikerCars"></a>
+  <nav class="nav-links">
+    <a href="index.html">Home</a>
+    <a href="index.html#services">Services</a>
+    <a href="sell.html">Sell Your Car</a>
+  </nav>
+</div></header>
+
+<div class="portalpage"><div class="wrap">
+
+  <!-- AUTH (logged out) -->
+  <div class="pcard pcard-narrow pcard-pad" id="auth-card">
+    <div class="msg" id="auth-msg"></div>
+
+    <!-- SIGN IN -->
+    <form id="signin-form">
+      <h3 style="margin:0 0 4px;color:var(--navy)">Dealer sign in</h3>
+      <p class="muted" style="margin:0 0 18px">Access your buy list, aged-unit sales, and activity.</p>
+      <div class="field"><label>Work email</label><input type="email" id="si-email" autocomplete="email" required></div>
+      <div class="field"><label>Password</label><input type="password" id="si-pass" autocomplete="current-password" required></div>
+      <button class="btn btn-primary btn-block" type="submit" id="si-btn">Log in</button>
+      <div class="switch">New dealer? <a id="to-signup">Create an account</a></div>
+    </form>
+
+    <!-- SIGN UP -->
+    <form id="signup-form" class="hidden">
+      <h3 style="margin:0 0 4px;color:var(--navy)">Create your dealer account</h3>
+      <p class="muted" style="margin:0 0 18px">Set up your dealership to start sending buy lists and selling aged units.</p>
+      <div class="grid2">
+        <div class="field"><label>First name</label><input type="text" id="su-first" autocomplete="given-name" required></div>
+        <div class="field"><label>Last name</label><input type="text" id="su-last" autocomplete="family-name"></div>
+      </div>
+      <div class="field"><label>Dealership</label><input type="text" id="su-dealer" required></div>
+      <div class="grid2">
+        <div class="field"><label>Email</label><input type="email" id="su-email" autocomplete="email" required></div>
+        <div class="field"><label>Phone</label><input type="tel" id="su-phone" autocomplete="tel"></div>
+      </div>
+      <div class="field"><label>Password</label><input type="password" id="su-pass" autocomplete="new-password" minlength="8" required><div class="muted" style="margin-top:5px">At least 8 characters.</div></div>
+      <button class="btn btn-primary btn-block" type="submit" id="su-btn">Create dealer account</button>
+      <div class="switch">Already have an account? <a id="to-signin">Log in</a></div>
+    </form>
+  </div>
+
+  <!-- APP (logged in) -->
+  <div class="pcard hidden" id="app-card">
+    <div class="portal-head">
+      <div>
+        <h3 id="hello">Welcome</h3>
+        <div class="muted" id="hello-sub"></div>
+      </div>
+      <div style="display:flex;align-items:center;gap:12px">
+        <span class="rolechip" id="role-chip">Dealer</span>
+        <button class="btn btn-primary" id="logout-btn" style="padding:9px 16px;font-size:13px">Log out</button>
+      </div>
+    </div>
+
+    <div class="tabs" id="tabs">
+      <button class="tab active" data-tab="buy" id="tab-btn-buy">Buy Cars</button>
+      <button class="tab" data-tab="sell" id="tab-btn-sell">Sell Cars</button>
+      <button class="tab" data-tab="activity" id="tab-btn-activity">Activity</button>
+    </div>
+
+    <div class="tabbody">
+      <div class="msg" id="app-msg"></div>
+
+      <!-- ======= BUY CARS ======= -->
+      <div id="tab-buy" class="tabpane">
+        <h3>Build your buy list</h3>
+        <p class="lead">Add every vehicle you're looking for and set how many units of each, then send the whole list at once.</p>
+        <div id="veh-list"></div>
+        <form id="request-form">
+          <div class="grid3">
+            <div class="field"><label>Make</label><input type="text" id="r-make" placeholder="e.g. Jeep" required></div>
+            <div class="field"><label>Model</label><input type="text" id="r-model" placeholder="e.g. Grand Cherokee"></div>
+            <div class="field"><label>Trim</label><input type="text" id="r-trim" placeholder="e.g. Limited"></div>
+          </div>
+          <div class="grid3">
+            <div class="field"><label>Year (from)</label><input type="number" id="r-ymin" min="1980" max="2100" placeholder="2020"></div>
+            <div class="field"><label>Year (to)</label><input type="number" id="r-ymax" min="1980" max="2100" placeholder="2024"></div>
+            <div class="field"><label>Max mileage</label><input type="number" id="r-miles" min="0" placeholder="60000"></div>
+          </div>
+          <div class="grid3">
+            <div class="field"><label>Target budget ($)</label><input type="number" id="r-budget" min="0" step="100" placeholder="28000"></div>
+            <div class="field"><label>Condition</label>
+              <select id="r-condition">
+                <option value="any">Any</option>
+                <option value="clean">Clean title only</option>
+                <option value="frontline">Front-line ready</option>
+                <option value="rough">Rough / project OK</option>
+              </select>
+            </div>
+            <div class="field"><label>Units</label><input type="number" id="r-qty" min="1" value="1"></div>
+          </div>
+          <div class="field"><label>Notes</label><textarea id="r-notes" rows="2" placeholder="Colors, packages, must-haves for this vehicle."></textarea></div>
+          <div class="form-actions">
+            <button class="btn btn-outline" type="button" id="add-veh-btn">+ Add another vehicle</button>
+            <button class="btn btn-accent" type="submit" id="r-btn">Submit list to the SpikerCars team</button>
+          </div>
+        </form>
+      </div>
+
+      <!-- ======= SELL CARS ======= -->
+      <div id="tab-sell" class="tabpane hidden">
+        <h3>Sell your aged units to the SpikerCars team</h3>
+        <p class="lead">Got units sitting on the lot? List them here — often more than the lane, without the auction hassle. Add each unit with your asking price, then send them over.</p>
+        <div id="unit-list"></div>
+        <form id="unit-form">
+          <div class="grid2">
+            <div class="field"><label>VIN</label><input type="text" id="u-vin" maxlength="17" placeholder="17-character VIN" autocomplete="off"></div>
+            <div class="field" style="display:flex;flex-direction:column;justify-content:flex-end"><button type="button" class="btn btn-outline btn-block" id="u-vin-lookup">Look up VIN</button></div>
+          </div>
+          <div id="u-vin-result" class="vin-result hidden"></div>
+          <div class="grid3">
+            <div class="field"><label>Mileage</label><input type="number" id="u-miles" min="0" placeholder="61300"></div>
+            <div class="field"><label>Days on lot</label><input type="number" id="u-days" min="0" placeholder="92"></div>
+            <div class="field"><label>Title</label>
+              <select id="u-title"><option value="Clean">Clean</option><option value="Rebuilt">Rebuilt</option><option value="Salvage">Salvage</option></select>
+            </div>
+          </div>
+          <div class="grid3">
+            <div class="field"><label>Asking price <span class="req">*</span></label><input type="text" id="u-price" inputmode="numeric" placeholder="$16,500"></div>
+            <div class="field"><label>Condition (1–10)</label>
+              <select id="u-cond"><option value="">Select…</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option><option>8</option><option>9</option><option>10</option></select>
+            </div>
+            <div class="field"></div>
+          </div>
+          <div class="field"><label>Notes</label><textarea id="u-notes" rows="2" placeholder="Anything the team should know — reconditioning, history, etc."></textarea></div>
+          <div class="form-actions">
+            <button class="btn btn-outline" type="button" id="add-unit-btn">+ Add another unit</button>
+            <button class="btn btn-accent" type="submit" id="u-btn">Send units to the SpikerCars team</button>
+          </div>
+          <div class="hint">Build a batch, send once. The SpikerCars team gets one email with every unit and your asking price on each, then makes an offer back.</div>
+        </form>
+      </div>
+
+      <!-- ======= ACTIVITY ======= -->
+      <div id="tab-activity" class="tabpane hidden">
+        <h3 id="activity-title">Your activity</h3>
+        <p class="lead">Everything you've sent us — buy requests and units for sale — with current status.</p>
+        <div id="act-list"><div class="empty">Loading…</div></div>
+      </div>
+
+    </div>
+  </div>
+
+</div></div>
+
+<footer class="site"><div class="wrap">
+  <img src="spikercars-logo.png" alt="SpikerCars">
+  <div>SpikerCars · SNS Enterprises LLC · Dealer Acquisition Specialist · spikercars.com</div>
+</div></footer>
+
+<script type="module">
+import { sb, $, vNum, money, escapeHtml, showMsg, clearMsg, getUser, loadProfile, roleHome, signOut } from './sc.js';
+
+const authCard = $('auth-card'), appCard = $('app-card');
+let profile = null, isAdmin = false;
+
+// ---------- auth toggle ----------
+$('to-signup').onclick = () => { $('signin-form').classList.add('hidden'); $('signup-form').classList.remove('hidden'); clearMsg($('auth-msg')); };
+$('to-signin').onclick = () => { $('signup-form').classList.add('hidden'); $('signin-form').classList.remove('hidden'); clearMsg($('auth-msg')); };
+if (location.hash === '#signup') $('to-signup').click();
+
+$('signup-form').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const btn = $('su-btn'); btn.disabled = true; btn.innerHTML = '<span class="spin"></span>Creating…';
+  clearMsg($('auth-msg'));
+  const { data, error } = await sb.auth.signUp({
+    email: $('su-email').value.trim(),
+    password: $('su-pass').value,
+    options: { data: {
+      first_name: $('su-first').value.trim(),
+      last_name: $('su-last').value.trim(),
+      dealership: $('su-dealer').value.trim(),
+      phone: $('su-phone').value.trim(),
+      account_type: 'dealer'
+    }}
+  });
+  btn.disabled = false; btn.textContent = 'Create dealer account';
+  if (error){ showMsg($('auth-msg'), error.message, 'err'); return; }
+  if (!data.session){ showMsg($('auth-msg'), 'Account created. Check your email to confirm, then log in.', 'ok'); $('to-signin').click(); }
+  else await onSignedIn();
+});
+
+$('signin-form').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const btn = $('si-btn'); btn.disabled = true; btn.innerHTML = '<span class="spin"></span>Logging in…';
+  clearMsg($('auth-msg'));
+  const { error } = await sb.auth.signInWithPassword({ email: $('si-email').value.trim(), password: $('si-pass').value });
+  btn.disabled = false; btn.textContent = 'Log in';
+  if (error){ showMsg($('auth-msg'), error.message, 'err'); return; }
+  await onSignedIn();
+});
+
+$('logout-btn').onclick = () => signOut('index.html');
+
+// ---------- tabs ----------
+function switchTab(name){
+  document.querySelectorAll('.tab').forEach(t => t.classList.toggle('active', t.dataset.tab === name));
+  document.querySelectorAll('.tabpane').forEach(p => p.classList.add('hidden'));
+  $('tab-' + name).classList.remove('hidden');
+  clearMsg($('app-msg'));
+  if (name === 'activity') loadActivity();
+}
+document.querySelectorAll('.tab').forEach(t => t.onclick = () => switchTab(t.dataset.tab));
+
+// ---------- session ----------
+async function onSignedIn(){
+  const user = await getUser();
+  if (!user){ renderLoggedOut(); return; }
+  profile = await loadProfile(user);
+  if (profile.role === 'consumer'){ location.href = 'sell.html'; return; }
+  isAdmin = profile.role === 'admin';
+  authCard.classList.add('hidden'); appCard.classList.remove('hidden');
+  $('hello').textContent = 'Welcome' + (profile.first_name ? ', ' + profile.first_name : '');
+  $('hello-sub').textContent = (profile.dealership ? profile.dealership + ' · ' : '') + (profile.email || user.email);
+  $('role-chip').textContent = isAdmin ? 'Admin' : 'Dealer';
+  $('role-chip').className = 'rolechip' + (isAdmin ? ' admin' : '');
+  // admins review only — hide submit tabs, show activity (all)
+  $('tab-btn-buy').classList.toggle('hidden', isAdmin);
+  $('tab-btn-sell').classList.toggle('hidden', isAdmin);
+  $('activity-title').textContent = isAdmin ? 'All dealer activity' : 'Your activity';
+  switchTab(isAdmin ? 'activity' : 'buy');
+}
+function renderLoggedOut(){ authCard.classList.remove('hidden'); appCard.classList.add('hidden'); }
+
+// ================= BUY: multi-vehicle =================
+let pendingVehicles = [];
+function readVehicleForm(){
+  const make = $('r-make').value.trim();
+  if (!make) return null;
+  return {
+    make, model: $('r-model').value.trim() || null, trim: $('r-trim').value.trim() || null,
+    year_min: vNum($('r-ymin').value), year_max: vNum($('r-ymax').value),
+    mileage_max: vNum($('r-miles').value), budget_max: vNum($('r-budget').value),
+    condition: $('r-condition').value, quantity: vNum($('r-qty').value) || 1,
+    notes: $('r-notes').value.trim() || null
+  };
+}
+function clearVehicleForm(){
+  ['r-make','r-model','r-trim','r-ymin','r-ymax','r-miles','r-budget','r-notes'].forEach(id => $(id).value = '');
+  $('r-condition').value = 'any'; $('r-qty').value = 1; $('r-make').focus();
+}
+function vehLabel(v){ return [ [v.year_min,v.year_max].filter(Boolean).join('-'), v.make, v.model, v.trim ].filter(Boolean).join(' ') || 'Any vehicle'; }
+function renderVehicleList(){
+  const el = $('veh-list');
+  if (!pendingVehicles.length){ el.innerHTML = ''; return; }
+  const totalUnits = pendingVehicles.reduce((n,v) => n + (v.quantity||1), 0);
+  el.innerHTML = pendingVehicles.map((v,i) => {
+    const sub = [ v.mileage_max ? '≤ '+Number(v.mileage_max).toLocaleString()+' mi' : '', v.budget_max ? '$'+Number(v.budget_max).toLocaleString() : '', (v.condition && v.condition!=='any') ? v.condition : '' ].filter(Boolean).join(' · ');
+    return `<div class="veh-item"><div><div class="vi-main">${escapeHtml(vehLabel(v))}</div>${sub ? '<div class="vi-sub">'+escapeHtml(sub)+'</div>' : ''}</div><div style="display:flex;align-items:center">
+      <span class="vi-qty">${v.quantity} unit${v.quantity>1?'s':''}</span><button type="button" class="vi-rm" data-i="${i}" aria-label="Remove">×</button></div></div>`;
+  }).join('') + `<div class="veh-summary">${pendingVehicles.length} vehicle${pendingVehicles.length>1?'s':''} · ${totalUnits} total unit${totalUnits>1?'s':''} on this list</div>`;
+  el.querySelectorAll('.vi-rm').forEach(b => b.onclick = () => { pendingVehicles.splice(Number(b.dataset.i),1); renderVehicleList(); });
+}
+$('add-veh-btn').addEventListener('click', () => {
+  const v = readVehicleForm();
+  if (!v){ showMsg($('app-msg'), 'Enter at least a make before adding a vehicle.', 'err'); return; }
+  clearMsg($('app-msg')); pendingVehicles.push(v); renderVehicleList(); clearVehicleForm();
+});
+$('request-form').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const cur = readVehicleForm(); const all = [...pendingVehicles]; if (cur) all.push(cur);
+  if (!all.length){ showMsg($('app-msg'), 'Add at least one vehicle to your list.', 'err'); return; }
+  const btn = $('r-btn'); btn.disabled = true; btn.innerHTML = '<span class="spin"></span>Sending…';
+  clearMsg($('app-msg'));
+  const batch_id = crypto.randomUUID();
+  const { error } = await sb.from('vehicle_requests').insert(all.map(v => ({ ...v, batch_id })));
+  btn.disabled = false; btn.textContent = 'Submit list to the SpikerCars team';
+  if (error){ showMsg($('app-msg'), error.message, 'err'); return; }
+  sb.functions.invoke('notify-new-request', { body: { batch_id } }).catch(()=>{});
+  const totalUnits = all.reduce((n,v) => n + (v.quantity||1), 0);
+  showMsg($('app-msg'), `Buy list sent — ${all.length} vehicle${all.length>1?'s':''}, ${totalUnits} total unit${totalUnits>1?'s':''}. We'll get on it.`, 'ok');
+  pendingVehicles = []; renderVehicleList(); clearVehicleForm();
+});
+
+// ================= SELL: multi-unit aged inventory =================
+let pendingUnits = [], unitDecoded = {};
+const parseMoney = (s) => { const n = Number(String(s).replace(/[^0-9.]/g,'')); return isFinite(n) && n > 0 ? n : null; };
+
+$('u-vin-lookup').addEventListener('click', async () => {
+  const vin = $('u-vin').value.trim();
+  if (vin.length < 11){ showMsg($('app-msg'), 'Enter a valid VIN (at least 11 characters).', 'err'); return; }
+  clearMsg($('app-msg'));
+  const btn = $('u-vin-lookup'); btn.disabled = true; btn.textContent = 'Looking up…';
+  try {
+    const r = await fetch(`https://vpic.nhtsa.dot.gov/api/vehicles/DecodeVinValues/${encodeURIComponent(vin)}?format=json`);
+    const j = await r.json(); const d = (j.Results && j.Results[0]) || {};
+    unitDecoded = { year: d.ModelYear || null, make: d.Make || null, model: d.Model || null, trim: d.Trim || null };
+    const label = [unitDecoded.year, unitDecoded.make, unitDecoded.model, unitDecoded.trim].filter(Boolean).join(' ');
+    $('u-vin-result').innerHTML = unitDecoded.make ? ('<strong>' + escapeHtml(label) + '</strong>') : '<span class="muted">We couldn\'t decode that VIN — you can still add the unit and we\'ll verify it.</span>';
+    $('u-vin-result').classList.remove('hidden');
+  } catch (e) {
+    $('u-vin-result').innerHTML = '<span class="muted">VIN lookup is unavailable right now — you can still add the unit.</span>';
+    $('u-vin-result').classList.remove('hidden');
+  }
+  btn.disabled = false; btn.textContent = 'Look up VIN';
+});
+
+function readUnitForm(){
+  const price = parseMoney($('u-price').value);
+  const vin = $('u-vin').value.trim();
+  if (!vin && !unitDecoded.make){ return { err: 'Enter a VIN (and look it up) before adding a unit.' }; }
+  if (!price){ return { err: 'Asking price is required for each unit.' }; }
+  return { unit: {
+    vin: vin || null,
+    year: unitDecoded.year ? Number(unitDecoded.year) : null,
+    make: unitDecoded.make || null, model: unitDecoded.model || null, trim: unitDecoded.trim || null,
+    mileage: vNum($('u-miles').value), days_on_lot: vNum($('u-days').value),
+    title: $('u-title').value, condition_score: vNum($('u-cond').value),
+    asking_price: price, notes: $('u-notes').value.trim() || null
+  }};
+}
+function clearUnitForm(){
+  ['u-vin','u-miles','u-days','u-price','u-notes'].forEach(id => $(id).value = '');
+  $('u-title').value = 'Clean'; $('u-cond').value = ''; unitDecoded = {};
+  $('u-vin-result').classList.add('hidden'); $('u-vin').focus();
+}
+function unitLabel(u){ return [u.year,u.make,u.model,u.trim].filter(Boolean).join(' ') || u.vin || 'Vehicle'; }
+function renderUnitList(){
+  const el = $('unit-list');
+  if (!pendingUnits.length){ el.innerHTML = ''; return; }
+  const total = pendingUnits.reduce((n,u) => n + (u.asking_price||0), 0);
+  el.innerHTML = pendingUnits.map((u,i) => {
+    const sub = [ u.mileage ? Number(u.mileage).toLocaleString()+' mi' : '', u.title ? u.title+' title' : '', (u.days_on_lot!=null)?u.days_on_lot+' days on lot':'', u.condition_score?'Cond '+u.condition_score+'/10':'' ].filter(Boolean).join(' · ');
+    return `<div class="veh-item"><div><div class="vi-main">${escapeHtml(unitLabel(u))}</div>${sub ? '<div class="vi-sub">'+escapeHtml(sub)+'</div>' : ''}</div><div style="display:flex;align-items:center">
+      <span class="vi-qty">${money(u.asking_price)}</span><button type="button" class="vi-rm" data-i="${i}" aria-label="Remove">×</button></div></div>`;
+  }).join('') + `<div class="veh-summary">${pendingUnits.length} unit${pendingUnits.length>1?'s':''} · asking total ${money(total)}</div>`;
+  el.querySelectorAll('.vi-rm').forEach(b => b.onclick = () => { pendingUnits.splice(Number(b.dataset.i),1); renderUnitList(); updateUnitBtn(); });
+}
+function updateUnitBtn(){
+  const n = pendingUnits.length;
+  $('u-btn').textContent = n ? `Send ${n} unit${n>1?'s':''} to the SpikerCars team` : 'Send units to the SpikerCars team';
+}
+$('add-unit-btn').addEventListener('click', () => {
+  const r = readUnitForm();
+  if (r.err){ showMsg($('app-msg'), r.err, 'err'); return; }
+  clearMsg($('app-msg')); pendingUnits.push(r.unit); renderUnitList(); updateUnitBtn(); clearUnitForm();
+});
+$('unit-form').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const all = [...pendingUnits];
+  const cur = readUnitForm();
+  if (cur.unit) all.push(cur.unit);
+  else if (!all.length){ showMsg($('app-msg'), cur.err || 'Add at least one unit.', 'err'); return; }
+  if (!all.length){ showMsg($('app-msg'), 'Add at least one unit.', 'err'); return; }
+  const btn = $('u-btn'); btn.disabled = true; btn.innerHTML = '<span class="spin"></span>Sending…';
+  clearMsg($('app-msg'));
+  const batch_id = crypto.randomUUID();
+  const { error } = await sb.from('dealer_sell_units').insert(all.map(u => ({ ...u, batch_id })));
+  btn.disabled = false; updateUnitBtn();
+  if (error){ showMsg($('app-msg'), error.message, 'err'); return; }
+  sb.functions.invoke('notify-dealer-sell', { body: { batch_id } }).catch(()=>{});
+  showMsg($('app-msg'), `Sent — ${all.length} unit${all.length>1?'s':''} on their way to the SpikerCars team. We'll come back with an offer.`, 'ok');
+  pendingUnits = []; renderUnitList(); updateUnitBtn(); clearUnitForm();
+});
+
+// ================= ACTIVITY =================
+async function loadActivity(){
+  const el = $('act-list');
+  el.innerHTML = '<div class="empty">Loading…</div>';
+  const [{ data: buys }, { data: sells }] = await Promise.all([
+    sb.from('vehicle_requests').select('*').order('created_at', { ascending:false }),
+    sb.from('dealer_sell_units').select('*').order('created_at', { ascending:false })
+  ]);
+  const rows = [];
+  (buys || []).forEach(r => {
+    const veh = [ [r.year_min,r.year_max].filter(Boolean).join('-'), r.make, r.model, r.trim ].filter(Boolean).join(' ') || 'Any vehicle';
+    const detail = [ r.quantity ? r.quantity+' unit'+(r.quantity>1?'s':'') : '', r.mileage_max ? '≤'+Number(r.mileage_max).toLocaleString()+' mi' : '', r.budget_max ? money(r.budget_max) : '' ].filter(Boolean).join(' · ');
+    rows.push({ t:'buy', veh, detail, status:r.status||'new', at:r.created_at });
+  });
+  (sells || []).forEach(u => {
+    const veh = [u.year,u.make,u.model,u.trim].filter(Boolean).join(' ') || u.vin || 'Vehicle';
+    const detail = [ 'Asking '+money(u.asking_price), u.mileage ? Number(u.mileage).toLocaleString()+' mi' : '' ].filter(Boolean).join(' · ');
+    rows.push({ t:'sell', veh, detail, status:u.status||'new', at:u.created_at });
+  });
+  rows.sort((a,b) => new Date(b.at) - new Date(a.at));
+  if (!rows.length){ el.innerHTML = '<div class="empty">No activity yet. Send a buy list or list a unit to sell.</div>'; return; }
+  el.innerHTML = `<table class="req"><thead><tr><th>Type</th><th>Vehicle</th><th>Detail</th><th>Status</th><th>Date</th></tr></thead><tbody>` +
+    rows.map(r => `<tr>
+      <td><span class="typechip ${r.t}">${r.t==='buy'?'Buy':'Sell'}</span></td>
+      <td><b>${escapeHtml(r.veh)}</b></td>
+      <td class="muted">${escapeHtml(r.detail)}</td>
+      <td><span class="status ${escapeHtml(r.status)}">${escapeHtml(String(r.status).replace(/_/g,' '))}</span></td>
+      <td class="muted">${new Date(r.at).toLocaleDateString()}</td>
+    </tr>`).join('') + `</tbody></table>`;
+}
+
+// init
+(async () => {
+  const { data: { session } } = await sb.auth.getSession();
+  if (session) await onSignedIn(); else renderLoggedOut();
+  updateUnitBtn();
+})();
+</script>
+</body>
+</html>
