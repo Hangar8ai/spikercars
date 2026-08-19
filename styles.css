@@ -151,6 +151,7 @@ table.req td{padding:10px;border-bottom:1px solid var(--line);vertical-align:top
 .typechip{font-weight:600;font-size:11px;letter-spacing:.04em;text-transform:uppercase;padding:3px 9px;border-radius:20px}
 .typechip.buy{background:#e6f0fa;color:#1c5a8f}
 .typechip.sell{background:#eef7ee;color:#2c7a3f}
+.typechip.consumer{background:#f3ecfb;color:#6b3fa0}
 .empty{text-align:center;color:var(--muted);font-weight:300;padding:26px}
 .spin{display:inline-block;width:16px;height:16px;border:2px solid rgba(255,255,255,.4);border-top-color:#fff;border-radius:50%;animation:sp .7s linear infinite;vertical-align:-3px;margin-right:6px}
 @keyframes sp{to{transform:rotate(360deg)}}
