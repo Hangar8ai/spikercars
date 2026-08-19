@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SpikerCars | Dealer Acquisition Specialist</title>
+<meta name="description" content="SpikerCars is a wholesale vehicle acquisition specialist for car dealerships. The right cars, at the right time, bought right.">
+<link rel="icon" href="spikercars-logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,300;0,400;0,500;0,600;0,700;1,700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --carolina:#4B9CD3; --sky:#7FC0E8; --pale:#DCEDF8;
+  --navy:#13294B; --ink:#0E1B2E; --gold:#E7A83A;
+  --paper:#F4F8FB; --line:#e5ecf3; --muted:#5a6675; --ok:#1f9d55; --err:#c0392b;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;font-family:'Poppins',system-ui,sans-serif;color:var(--ink);background:#fff;line-height:1.6;-webkit-font-smoothing:antialiased}
+a{color:var(--carolina);text-decoration:none}
+.wrap{max-width:1080px;margin:0 auto;padding:0 24px}
+.btn{display:inline-block;font-weight:600;font-size:15px;padding:13px 24px;border-radius:9px;border:0;cursor:pointer;font-family:inherit;transition:.15s}
+.btn-accent{background:var(--carolina);color:var(--navy)}
+.btn-accent:hover{background:#63b0e0}
+.btn-primary{background:var(--navy);color:#fff}
+.btn-primary:hover{background:#1c3a5e}
+.btn-ghost{background:transparent;color:#fff;border:2px solid rgba(255,255,255,.5)}
+.btn-ghost:hover{border-color:#fff}
+.btn-block{display:block;width:100%;text-align:center}
+.btn[disabled]{opacity:.6;cursor:not-allowed}
+/* header */
+header.site{position:sticky;top:0;z-index:50;background:rgba(255,255,255,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+header.site .wrap{display:flex;align-items:center;justify-content:space-between;padding:12px 0}
+header.site img{height:138px;width:auto;display:block}
+.nav-links{display:flex;align-items:center;gap:26px}
+.nav-links a{color:var(--navy);font-weight:500;font-size:14.5px}
+.nav-links a.cta{color:var(--navy)}
+@media(max-width:720px){.nav-links a:not(.cta){display:none}}
+/* hero */
+.hero{background:radial-gradient(1200px 500px at 70% -10%, #1d3a63 0%, var(--navy) 55%);color:#fff;padding:96px 0 88px;position:relative;overflow:hidden}
+.hero .badge{font-weight:500;letter-spacing:.22em;text-transform:uppercase;font-size:12px;color:var(--sky)}
+.hero h1{font-weight:700;font-size:52px;line-height:1.05;letter-spacing:-.02em;margin:16px 0 14px;max-width:14ch}
+.hero h1 .c{color:var(--carolina)}
+.hero p.lead{font-weight:300;font-size:19px;color:#cfdcec;max-width:56ch;margin:0 0 30px}
+.hero .cta-row{display:flex;gap:14px;flex-wrap:wrap}
+.hero .glow{position:absolute;height:80%;width:auto;top:10%;right:2%;opacity:.16;transform:none;pointer-events:none;z-index:0}
+.hero .wrap{position:relative;z-index:1}
+@media(max-width:720px){.hero h1{font-size:38px}.hero{padding:64px 0 56px}.hero .glow{height:auto;width:115%;top:50%;left:50%;right:auto;transform:translate(-50%,-50%);opacity:.07}header.site img{height:96px}}
+/* sections */
+section{padding:76px 0}
+.eyebrow{font-weight:600;letter-spacing:.16em;text-transform:uppercase;font-size:12.5px;color:var(--carolina);text-align:center}
+h2.sec{font-weight:700;font-size:32px;letter-spacing:-.01em;text-align:center;margin:8px 0 10px}
+.sec-sub{text-align:center;color:var(--muted);font-weight:300;font-size:16.5px;max-width:60ch;margin:0 auto 44px}
+.pillars{display:grid;grid-template-columns:repeat(4,1fr);gap:20px}
+.pillar{border:1px solid var(--line);border-radius:16px;padding:26px 22px;background:#fff}
+.pillar .pn{font-weight:700;color:var(--carolina);font-size:13px;letter-spacing:.08em}
+.pillar h3{font-weight:700;font-size:18px;margin:8px 0 8px}
+.pillar p{font-weight:300;font-size:14.5px;color:var(--muted);margin:0}
+@media(max-width:860px){.pillars{grid-template-columns:1fr 1fr}}
+@media(max-width:520px){.pillars{grid-template-columns:1fr}}
+.proof{background:#fff}
+.proof .row{display:grid;grid-template-columns:1fr 1fr;gap:16px;max-width:960px;margin:0 auto;align-items:center}
+@media(max-width:560px){.proof .row{grid-template-columns:1fr}}
+.chip{text-align:center;font-weight:500;font-size:14px;background:#fff;border:1px solid var(--line);border-radius:24px;padding:15px 22px;color:var(--navy);box-shadow:0 3px 14px -6px rgba(19,41,75,.2)}
+.chip b{color:var(--carolina)}
+/* portal */
+#portal{background:var(--paper);border-top:1px solid var(--line)}
+.portal-card{max-width:560px;margin:0 auto;background:#fff;border:1px solid var(--line);border-radius:20px;box-shadow:0 18px 50px -30px rgba(19,41,75,.4);padding:34px}
+.portal-wide{max-width:920px}
+.field{margin-bottom:14px}
+.field label{display:block;font-weight:500;font-size:13px;color:var(--navy);margin-bottom:6px}
+.field input,.field select,.field textarea{width:100%;font-family:inherit;font-size:15px;padding:12px 13px;border:1px solid #d5dee8;border-radius:9px;background:#fff;color:var(--ink)}
+.field input:focus,.field select:focus,.field textarea:focus{outline:2px solid var(--carolina);border-color:var(--carolina)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}
+@media(max-width:560px){.grid2,.grid3{grid-template-columns:1fr}}
+.muted{color:var(--muted);font-size:14px}
+.switch{text-align:center;margin-top:14px;font-size:14px;color:var(--muted)}
+.switch a{cursor:pointer;font-weight:600}
+.msg{padding:11px 14px;border-radius:9px;font-size:14px;margin-bottom:14px;display:none}
+.msg.ok{background:#e8f6ee;color:#186a3b;display:block}
+.msg.err{background:#fdecea;color:#a5281b;display:block}
+.hidden{display:none!important}
+.portal-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;flex-wrap:wrap;gap:10px}
+.portal-head h3{margin:0;font-weight:700;font-size:20px}
+.rolechip{font-weight:600;font-size:11px;letter-spacing:.06em;text-transform:uppercase;padding:5px 11px;border-radius:20px;background:var(--pale);color:var(--navy)}
+.rolechip.admin{background:var(--navy);color:#fff}
+table.req{width:100%;border-collapse:collapse;margin-top:8px;font-size:14px}
+table.req th{text-align:left;font-weight:600;font-size:12px;letter-spacing:.04em;text-transform:uppercase;color:var(--muted);padding:8px 10px;border-bottom:2px solid var(--line)}
+table.req td{padding:10px;border-bottom:1px solid var(--line);vertical-align:top}
+.status{font-weight:600;font-size:11px;letter-spacing:.04em;text-transform:uppercase;padding:3px 9px;border-radius:20px}
+.status.new{background:#e6f0fa;color:#1c5a8f}
+.status.sourcing{background:#fff3d6;color:#8a6100}
+.status.fulfilled{background:#e8f6ee;color:#186a3b}
+.status.closed{background:#eee;color:#555}
+.empty{text-align:center;color:var(--muted);font-weight:300;padding:26px}
+footer.site{background:var(--navy);color:#c7d4e4;padding:40px 0;font-weight:300;font-size:13.5px}
+footer.site .wrap{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px}
+footer.site img{height:72px;opacity:.95}
+.spin{display:inline-block;width:16px;height:16px;border:2px solid rgba(255,255,255,.4);border-top-color:#fff;border-radius:50%;animation:sp .7s linear infinite;vertical-align:-3px;margin-right:6px}
+@keyframes sp{to{transform:rotate(360deg)}}
+/* orphan control + responsive alignment (mobile + tablet go left-aligned) */
+.hero h1,h2.sec{text-wrap:balance}
+.hero p.lead,.sec-sub,.pillar p,.chip{text-wrap:pretty}
+@media(max-width:1024px){
+  .eyebrow{text-align:left}
+  h2.sec{text-align:left}
+  .sec-sub{text-align:left;max-width:none;margin-left:0;margin-right:0}
+}
+</style>
+</head>
+<body>
+
+<header class="site"><div class="wrap">
+  <a href="#top"><img src="spikercars-logo.png" alt="SpikerCars"></a>
+  <nav class="nav-links">
+    <a href="#services">Services</a>
+    <a href="#how">How it works</a>
+    <a class="cta btn btn-accent" href="#portal" id="nav-cta">Dealer Login</a>
+  </nav>
+</div></header>
+
+<a id="top"></a>
+<section class="hero" style="padding-top:96px">
+  <img class="glow" src="spikercars-logo.png" alt="">
+  <div class="wrap">
+    <div class="badge">Dealer Acquisition Specialist</div>
+    <h1>The right cars, at the right time, <span class="c">bought right.</span></h1>
+    <p class="lead">SpikerCars is your wholesale acquisition specialist, sourcing the units that grow your gross and handling the transport and arbitration so your team gets hours back.</p>
+    <div class="cta-row">
+      <a class="btn btn-accent" href="#portal">Submit a Vehicle Request</a>
+      <a class="btn btn-ghost" href="#how">See how it works</a>
+    </div>
+  </div>
+</section>
+
+<section id="services">
+  <div class="wrap">
+    <div class="eyebrow">What we do</div>
+    <h2 class="sec">Wholesale acquisition, handled end to end</h2>
+    <p class="sec-sub">We buy the units that move at your store, timed for maximum gross, and take the busywork off your desk.</p>
+    <div class="pillars">
+      <div class="pillar"><div class="pn">01</div><h3>Acquisition</h3><p>We hand-pick the units that fit your store and your buyers, sourced from the lanes, not from a list of whatever's cheap.</p></div>
+      <div class="pillar"><div class="pn">02</div><h3>Market Timing</h3><p>We read your sales history and buy models when the calendar works in your favor, so every unit lands for maximum gross.</p></div>
+      <div class="pillar"><div class="pn">03</div><h3>Transportation</h3><p>From the auction block to your front line. We move it, track it, and get it to you ready to sell.</p></div>
+      <div class="pillar"><div class="pn">04</div><h3>Arbitration</h3><p>Condition disputes and concessions are ours to chase. You get the resolution without the phone calls.</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="portal">
+  <div class="wrap">
+    <div class="eyebrow">Dealer Portal</div>
+    <h2 class="sec" id="portal-title">Submit a vehicle request</h2>
+    <p class="sec-sub" id="portal-sub">Log in or create your dealer account to send Spiker the cars you're looking for.</p>
+
+    <!-- AUTH (logged out) -->
+    <div class="portal-card" id="auth-card">
+      <div class="msg" id="auth-msg"></div>
+
+      <!-- SIGN IN -->
+      <form id="signin-form">
+        <div class="field"><label>Work email</label><input type="email" id="si-email" autocomplete="email" required></div>
+        <div class="field"><label>Password</label><input type="password" id="si-pass" autocomplete="current-password" required></div>
+        <button class="btn btn-primary btn-block" type="submit" id="si-btn">Log in</button>
+        <div class="switch">New dealer? <a id="to-signup">Create an account</a></div>
+      </form>
+
+      <!-- SIGN UP -->
+      <form id="signup-form" class="hidden">
+        <div class="grid2">
+          <div class="field"><label>Your name</label><input type="text" id="su-name" autocomplete="name" required></div>
+          <div class="field"><label>Dealership</label><input type="text" id="su-dealer" required></div>
+        </div>
+        <div class="grid2">
+          <div class="field"><label>Work email</label><input type="email" id="su-email" autocomplete="email" required></div>
+          <div class="field"><label>Phone</label><input type="tel" id="su-phone" autocomplete="tel"></div>
+        </div>
+        <div class="field"><label>Password</label><input type="password" id="su-pass" autocomplete="new-password" minlength="8" required><div class="muted" style="margin-top:5px">At least 8 characters.</div></div>
+        <button class="btn btn-primary btn-block" type="submit" id="su-btn">Create dealer account</button>
+        <div class="switch">Already have an account? <a id="to-signin">Log in</a></div>
+      </form>
+    </div>
+
+    <!-- APP (logged in) -->
+    <div class="portal-card portal-wide hidden" id="app-card">
+      <div class="portal-head">
+        <div>
+          <h3 id="hello">Welcome</h3>
+          <div class="muted" id="hello-sub"></div>
+        </div>
+        <div style="display:flex;align-items:center;gap:12px">
+          <span class="rolechip" id="role-chip">Dealer</span>
+          <button class="btn btn-primary" id="logout-btn" style="padding:9px 16px;font-size:13px">Log out</button>
+        </div>
+      </div>
+
+      <div class="msg" id="app-msg"></div>
+
+      <!-- request form (dealers) -->
+      <div id="request-form-wrap">
+        <h3 style="font-size:16px;margin:18px 0 12px">New vehicle request</h3>
+        <form id="request-form">
+          <div class="grid3">
+            <div class="field"><label>Make</label><input type="text" id="r-make" placeholder="e.g. Jeep" required></div>
+            <div class="field"><label>Model</label><input type="text" id="r-model" placeholder="e.g. Grand Cherokee"></div>
+            <div class="field"><label>Trim</label><input type="text" id="r-trim" placeholder="e.g. Limited"></div>
+          </div>
+          <div class="grid3">
+            <div class="field"><label>Year (from)</label><input type="number" id="r-ymin" min="1980" max="2100" placeholder="2020"></div>
+            <div class="field"><label>Year (to)</label><input type="number" id="r-ymax" min="1980" max="2100" placeholder="2024"></div>
+            <div class="field"><label>Max mileage</label><input type="number" id="r-miles" min="0" placeholder="60000"></div>
+          </div>
+          <div class="grid3">
+            <div class="field"><label>Target budget ($)</label><input type="number" id="r-budget" min="0" step="100" placeholder="28000"></div>
+            <div class="field"><label>Condition</label>
+              <select id="r-condition">
+                <option value="any">Any</option>
+                <option value="clean">Clean title only</option>
+                <option value="frontline">Front-line ready</option>
+                <option value="rough">Rough / project OK</option>
+              </select>
+            </div>
+            <div class="field"><label>Quantity</label><input type="number" id="r-qty" min="1" value="1"></div>
+          </div>
+          <div class="field"><label>Notes</label><textarea id="r-notes" rows="3" placeholder="Colors, packages, must-haves, or anything specific for this request."></textarea></div>
+          <button class="btn btn-accent btn-block" type="submit" id="r-btn">Send request to Spiker</button>
+        </form>
+      </div>
+
+      <!-- requests list -->
+      <div style="margin-top:26px">
+        <h3 style="font-size:16px;margin:0 0 6px" id="list-title">Your requests</h3>
+        <div id="req-list"><div class="empty">Loading…</div></div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<section id="how" class="proof">
+  <div class="wrap">
+    <div class="eyebrow">Why dealers use us</div>
+    <h2 class="sec">Bought right. Fewer hours. More gross.</h2>
+    <p class="sec-sub">Submit what you're looking for and it goes straight to Spiker, tracked, recorded, and moving. Call or text anytime; the portal just makes sure nothing slips while you're on the lot.</p>
+    <div class="row">
+      <span class="chip">Saves a used-car director <b>4 to 6 hours a day</b></span>
+      <span class="chip">Buys on <b>90-day market patterns</b></span>
+      <span class="chip"><b>Auction → front line</b>, transport included</span>
+      <span class="chip"><b>Arbitration</b> managed end to end</span>
+    </div>
+  </div>
+</section>
+
+<footer class="site"><div class="wrap">
+  <img src="spikercars-logo.png" alt="SpikerCars">
+  <div>SpikerCars · SNS Enterprises LLC · Dealer Acquisition Specialist · spikercars.com</div>
+</div></footer>
+
+<script type="module">
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+
+const SUPABASE_URL = 'https://ihefyrwfgllieowplwok.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_d0yEM0iEhqBebg13XIZv1g_qm9jW2m9';
+const sb = createClient(SUPABASE_URL, SUPABASE_KEY);
+
+const $ = (id) => document.getElementById(id);
+const authCard = $('auth-card'), appCard = $('app-card');
+let profile = null;
+
+function showMsg(el, text, kind){ el.className = 'msg ' + kind; el.textContent = text; }
+function clearMsg(el){ el.className = 'msg'; el.textContent=''; }
+
+// toggle sign in / sign up
+$('to-signup').onclick = () => { $('signin-form').classList.add('hidden'); $('signup-form').classList.remove('hidden'); clearMsg($('auth-msg')); };
+$('to-signin').onclick = () => { $('signup-form').classList.add('hidden'); $('signin-form').classList.remove('hidden'); clearMsg($('auth-msg')); };
+
+// SIGN UP
+$('signup-form').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const btn = $('su-btn'); btn.disabled = true; btn.innerHTML = '<span class="spin"></span>Creating…';
+  clearMsg($('auth-msg'));
+  const { data, error } = await sb.auth.signUp({
+    email: $('su-email').value.trim(),
+    password: $('su-pass').value,
+    options: { data: {
+      full_name: $('su-name').value.trim(),
+      dealership: $('su-dealer').value.trim(),
+      phone: $('su-phone').value.trim()
+    }}
+  });
+  btn.disabled = false; btn.textContent = 'Create dealer account';
+  if (error) { showMsg($('auth-msg'), error.message, 'err'); return; }
+  if (!data.session) {
+    showMsg($('auth-msg'), 'Account created. Check your email to confirm, then log in.', 'ok');
+    $('to-signin').click();
+  } else {
+    await onSignedIn();
+  }
+});
+
+// SIGN IN
+$('signin-form').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const btn = $('si-btn'); btn.disabled = true; btn.innerHTML = '<span class="spin"></span>Logging in…';
+  clearMsg($('auth-msg'));
+  const { error } = await sb.auth.signInWithPassword({ email: $('si-email').value.trim(), password: $('si-pass').value });
+  btn.disabled = false; btn.textContent = 'Log in';
+  if (error) { showMsg($('auth-msg'), error.message, 'err'); return; }
+  await onSignedIn();
+});
+
+// LOGOUT
+$('logout-btn').onclick = async () => { await sb.auth.signOut(); location.hash = '#portal'; renderLoggedOut(); };
+
+function renderLoggedOut(){
+  authCard.classList.remove('hidden'); appCard.classList.add('hidden');
+  $('nav-cta').textContent = 'Dealer Login';
+  $('portal-title').textContent = 'Submit a vehicle request';
+  $('portal-sub').textContent = 'Log in or create your dealer account to send Spiker the cars you’re looking for.';
+}
+
+async function onSignedIn(){
+  const { data: { user } } = await sb.auth.getUser();
+  if (!user) { renderLoggedOut(); return; }
+  // load profile (role)
+  const { data: prof } = await sb.from('profiles').select('full_name,dealership,role,email').eq('id', user.id).maybeSingle();
+  profile = prof || { role:'dealer', email:user.email };
+  authCard.classList.add('hidden'); appCard.classList.remove('hidden');
+  $('nav-cta').textContent = 'My Portal';
+  $('portal-title').textContent = 'Dealer Portal';
+  $('portal-sub').textContent = 'Send Spiker what you’re looking for and track your requests.';
+  const isAdmin = profile.role === 'admin';
+  $('hello').textContent = 'Welcome' + (profile.full_name ? ', ' + profile.full_name.split(' ')[0] : '');
+  $('hello-sub').textContent = (profile.dealership ? profile.dealership + ' · ' : '') + (profile.email || user.email);
+  $('role-chip').textContent = isAdmin ? 'Admin' : 'Dealer';
+  $('role-chip').className = 'rolechip' + (isAdmin ? ' admin' : '');
+  $('request-form-wrap').classList.toggle('hidden', isAdmin);
+  $('list-title').textContent = isAdmin ? 'All dealer requests' : 'Your requests';
+  await loadRequests(isAdmin);
+}
+
+// SUBMIT REQUEST
+$('request-form').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const btn = $('r-btn'); btn.disabled = true; btn.innerHTML = '<span class="spin"></span>Sending…';
+  clearMsg($('app-msg'));
+  const num = (v) => v === '' ? null : Number(v);
+  const row = {
+    make: $('r-make').value.trim() || null,
+    model: $('r-model').value.trim() || null,
+    trim: $('r-trim').value.trim() || null,
+    year_min: num($('r-ymin').value),
+    year_max: num($('r-ymax').value),
+    mileage_max: num($('r-miles').value),
+    budget_max: num($('r-budget').value),
+    condition: $('r-condition').value,
+    quantity: num($('r-qty').value) || 1,
+    notes: $('r-notes').value.trim() || null
+  };
+  const { error } = await sb.from('vehicle_requests').insert(row);
+  btn.disabled = false; btn.textContent = 'Send request to Spiker';
+  if (error) { showMsg($('app-msg'), error.message, 'err'); return; }
+  showMsg($('app-msg'), 'Request sent to Spiker. He’ll get on it.', 'ok');
+  $('request-form').reset(); $('r-qty').value = 1;
+  await loadRequests(profile.role === 'admin');
+});
+
+// LOAD REQUESTS
+async function loadRequests(isAdmin){
+  const el = $('req-list');
+  let q = sb.from('vehicle_requests').select('*').order('created_at', { ascending:false });
+  const { data, error } = await q;
+  if (error) { el.innerHTML = '<div class="empty">Could not load requests: ' + error.message + '</div>'; return; }
+  if (!data || !data.length) { el.innerHTML = '<div class="empty">No requests yet.</div>'; return; }
+  const money = (v) => v == null ? '' : '$' + Number(v).toLocaleString();
+  const yr = (r) => [r.year_min, r.year_max].filter(Boolean).join('-');
+  const veh = (r) => [yr(r), r.make, r.model, r.trim].filter(Boolean).join(' ');
+  const rows = data.map(r => `<tr>
+    <td><b>${veh(r) || 'Any vehicle'}</b>${r.notes ? '<div class="muted">'+escapeHtml(r.notes)+'</div>' : ''}</td>
+    <td>${r.mileage_max ? '≤ '+Number(r.mileage_max).toLocaleString()+' mi' : ''}</td>
+    <td>${money(r.budget_max)}</td>
+    <td>${r.quantity}</td>
+    <td><span class="status ${r.status}">${r.status}</span></td>
+    <td class="muted">${new Date(r.created_at).toLocaleDateString()}</td>
+  </tr>`).join('');
+  el.innerHTML = `<table class="req"><thead><tr>
+    <th>Vehicle</th><th>Max miles</th><th>Budget</th><th>Qty</th><th>Status</th><th>Requested</th>
+  </tr></thead><tbody>${rows}</tbody></table>`;
+}
+
+function escapeHtml(s){ return s.replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+
+// init
+(async () => {
+  const { data: { session } } = await sb.auth.getSession();
+  if (session) await onSignedIn(); else renderLoggedOut();
+})();
+</script>
+</body>
+</html>
