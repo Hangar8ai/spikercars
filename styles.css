@@ -68,15 +68,15 @@ h2.sec{font-weight:700;font-size:32px;letter-spacing:-.01em;margin:8px 0 10px}
 @media(max-width:860px){.pillars{grid-template-columns:1fr 1fr}}
 @media(max-width:520px){.pillars{grid-template-columns:1fr}}
 
-/* feature band (navy, home only) */
-.feature{background:var(--navy);color:#fff}
-.feature .wrap{display:grid;grid-template-columns:1.1fr .9fr;gap:48px;align-items:center}
+/* feature band (navy, home only) — large logo watermark in the background */
+.feature{background:radial-gradient(1100px 480px at 78% 12%, #1d3a63 0%, var(--navy) 58%);color:#fff;position:relative;overflow:hidden}
+.feature .glow{position:absolute;height:90%;width:auto;top:5%;right:1%;opacity:.16;pointer-events:none;z-index:0}
+.feature .wrap{position:relative;z-index:1}
+.feat-copy{max-width:560px}
 .feature .eyebrow{color:var(--sky)}
 .feature h2{font-size:33px;line-height:1.12;margin:12px 0 16px;font-weight:700}.feature h2 .c{color:var(--carolina)}
 .feature p{font-size:16.5px;line-height:1.55;color:#cfdcec;font-weight:300;margin:0 0 24px;max-width:520px}
-.feat-img{display:flex;align-items:center;justify-content:center;background:radial-gradient(circle at 55% 45%, #21406e 0%, rgba(33,64,110,0) 68%);border-radius:20px;padding:16px}
-.feat-img img{max-width:100%;height:auto;max-height:230px}
-@media(max-width:820px){.feature .wrap{grid-template-columns:1fr;gap:26px}.feat-img{order:-1}.feat-img img{max-height:170px}}
+@media(max-width:820px){.feature .glow{height:auto;width:135%;top:50%;left:50%;right:auto;transform:translate(-50%,-50%);opacity:.08}.feat-copy{max-width:none}}
 
 /* proof */
 .proof{background:#fff}
