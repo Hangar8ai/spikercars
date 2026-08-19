@@ -101,7 +101,7 @@ footer.site img{height:72px;opacity:.95}
 .spin{display:inline-block;width:16px;height:16px;border:2px solid rgba(255,255,255,.4);border-top-color:#fff;border-radius:50%;animation:sp .7s linear infinite;vertical-align:-3px;margin-right:6px}
 @keyframes sp{to{transform:rotate(360deg)}}
 /* orphan control + responsive alignment (mobile + tablet go left-aligned) */
-.hero h1,h2.sec{text-wrap:balance}
+.hero h1,h2.sec,#portal-sub{text-wrap:balance}
 .hero p.lead,.sec-sub,.pillar p,.chip{text-wrap:pretty}
 @media(max-width:1024px){
   .eyebrow{text-align:left}
@@ -153,7 +153,7 @@ footer.site img{height:72px;opacity:.95}
   <div class="wrap">
     <div class="eyebrow">Dealer Portal</div>
     <h2 class="sec" id="portal-title">Submit a vehicle request</h2>
-    <p class="sec-sub" id="portal-sub">Log in or create your dealer account to send Spiker the cars you're looking for.</p>
+    <p class="sec-sub" id="portal-sub">Log in or create your dealer account to send Spiker the units you're after and track every request in one place.</p>
 
     <!-- AUTH (logged out) -->
     <div class="portal-card" id="auth-card">
@@ -318,7 +318,7 @@ function renderLoggedOut(){
   authCard.classList.remove('hidden'); appCard.classList.add('hidden');
   $('nav-cta').textContent = 'Dealer Login';
   $('portal-title').textContent = 'Submit a vehicle request';
-  $('portal-sub').textContent = 'Log in or create your dealer account to send Spiker the cars you’re looking for.';
+  $('portal-sub').textContent = 'Log in or create your dealer account to send Spiker the units you’re after and track every request in one place.';
 }
 
 async function onSignedIn(){
