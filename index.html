@@ -120,6 +120,11 @@ footer.site img{height:72px;opacity:.95}
 .vi-rm{cursor:pointer;color:var(--muted);border:none;background:none;font-size:20px;line-height:1;padding:0 4px}
 .vi-rm:hover{color:#c0392b}
 .veh-summary{font-size:13px;color:var(--navy);font-weight:600;margin:2px 2px 0}
+.vin-result{background:#DCEDF8;border-radius:10px;padding:12px 16px;margin:0 0 14px;font-size:15px;color:var(--navy)}
+.radio-row{display:flex;gap:20px;flex-wrap:wrap;padding-top:6px}
+.radio-row label{display:flex;align-items:center;gap:7px;font-size:14px;color:var(--navy);cursor:pointer;font-weight:500}
+.statuschip{font-size:12px;font-weight:600;color:var(--navy);background:#DCEDF8;border-radius:20px;padding:4px 12px;text-transform:capitalize;white-space:nowrap}
+.subhead{font-size:14px;font-weight:700;color:var(--navy);margin:10px 0 2px}
 </style>
 </head>
 <body>
@@ -129,6 +134,7 @@ footer.site img{height:72px;opacity:.95}
   <nav class="nav-links">
     <a href="#services">Services</a>
     <a href="#how">How it works</a>
+    <a href="#sell" id="nav-sell">Sell Your Car</a>
     <a class="cta btn btn-accent" href="#portal" id="nav-cta">Dealer Login</a>
   </nav>
 </div></header>
@@ -163,7 +169,7 @@ footer.site img{height:72px;opacity:.95}
 
 <section id="portal">
   <div class="wrap">
-    <div class="eyebrow">Dealer Portal</div>
+    <div class="eyebrow" id="portal-eyebrow">Dealer Portal</div>
     <h2 class="sec" id="portal-title">Submit a vehicle request</h2>
     <p class="sec-sub" id="portal-sub">Log in or create your dealer account to send the SpikerCars team the units you're after and track every request in one place.</p>
 
@@ -185,11 +191,11 @@ footer.site img{height:72px;opacity:.95}
           <div class="field"><label>First name</label><input type="text" id="su-first" autocomplete="given-name" required></div>
           <div class="field"><label>Last name</label><input type="text" id="su-last" autocomplete="family-name"></div>
         </div>
+        <div class="field" id="su-dealer-field"><label>Dealership</label><input type="text" id="su-dealer" required></div>
         <div class="grid2">
-          <div class="field"><label>Dealership</label><input type="text" id="su-dealer" required></div>
+          <div class="field"><label>Email</label><input type="email" id="su-email" autocomplete="email" required></div>
           <div class="field"><label>Phone</label><input type="tel" id="su-phone" autocomplete="tel"></div>
         </div>
-        <div class="field"><label>Work email</label><input type="email" id="su-email" autocomplete="email" required></div>
         <div class="field"><label>Password</label><input type="password" id="su-pass" autocomplete="new-password" minlength="8" required><div class="muted" style="margin-top:5px">At least 8 characters.</div></div>
         <button class="btn btn-primary btn-block" type="submit" id="su-btn">Create dealer account</button>
         <div class="switch">Already have an account? <a id="to-signin">Log in</a></div>
@@ -247,10 +253,57 @@ footer.site img{height:72px;opacity:.95}
         </form>
       </div>
 
-      <!-- requests list -->
-      <div style="margin-top:26px">
+      <!-- requests list (dealer/admin) -->
+      <div style="margin-top:26px" id="req-list-wrap">
         <h3 style="font-size:16px;margin:0 0 6px" id="list-title">Your requests</h3>
         <div id="req-list"><div class="empty">Loading…</div></div>
+      </div>
+
+      <!-- consumer: sell your car (hidden unless consumer) -->
+      <div id="consumer-wrap" class="hidden">
+        <h3 style="font-size:16px;margin:18px 0 4px">Sell your car to SpikerCars</h3>
+        <p class="muted" style="margin:0 0 14px">Enter your VIN and a few details. We'll review it and come back with a cash offer.</p>
+        <form id="sell-form">
+          <div class="grid2">
+            <div class="field"><label>VIN</label><input type="text" id="s-vin" maxlength="17" placeholder="17-character VIN" autocomplete="off" required></div>
+            <div class="field" style="display:flex;flex-direction:column;justify-content:flex-end"><button type="button" class="btn btn-outline btn-block" id="vin-lookup">Look up VIN</button></div>
+          </div>
+          <div id="vin-result" class="vin-result hidden"></div>
+          <div class="grid3">
+            <div class="field"><label>Mileage</label><input type="number" id="s-miles" min="0" placeholder="e.g. 48000" required></div>
+            <div class="field"><label>Condition (1–10)</label>
+              <select id="s-cond" required><option value="">Select…</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option><option>8</option><option>9</option><option>10</option></select>
+            </div>
+            <div class="field"><label>Tires need replacing?</label><select id="s-tires"><option value="no">No</option><option value="yes">Yes</option></select></div>
+          </div>
+          <div class="grid3">
+            <div class="field"><label>Windshield need replacing?</label><select id="s-wind"><option value="no">No</option><option value="yes">Yes</option></select></div>
+            <div class="field" style="grid-column:span 2"><label>Are you replacing this car?</label>
+              <div class="radio-row">
+                <label><input type="radio" name="s-replace" value="no" checked> Just selling</label>
+                <label><input type="radio" name="s-replace" value="yes"> Selling &amp; replacing</label>
+              </div>
+            </div>
+          </div>
+          <div id="replace-wrap" class="hidden">
+            <div class="subhead">What are you looking to buy?</div>
+            <p class="muted" style="margin:0 0 12px;font-size:12.5px">We'll pass this to the dealer buying your car so they can help you find it. SpikerCars won't source it directly.</p>
+            <div class="grid2">
+              <div class="field"><label>Make</label><input type="text" id="w-make" placeholder="e.g. Honda"></div>
+              <div class="field"><label>Model</label><input type="text" id="w-model" placeholder="e.g. CR-V"></div>
+            </div>
+            <div class="grid3">
+              <div class="field"><label>New or used</label><select id="w-cond"><option value="either">Either</option><option value="new">New</option><option value="used">Used</option></select></div>
+              <div class="field"><label>Year (from)</label><input type="number" id="w-ymin" min="1990" max="2100" placeholder="2021"></div>
+              <div class="field"><label>Year (to)</label><input type="number" id="w-ymax" min="1990" max="2100" placeholder="2024"></div>
+            </div>
+          </div>
+          <button class="btn btn-accent btn-block" type="submit" id="s-btn" style="margin-top:6px">Submit my car</button>
+        </form>
+      </div>
+      <div id="sell-list-wrap" class="hidden" style="margin-top:26px">
+        <h3 style="font-size:16px;margin:0 0 6px">Your submissions</h3>
+        <div id="sell-list"><div class="empty">Loading…</div></div>
       </div>
     </div>
 
@@ -305,11 +358,12 @@ $('signup-form').addEventListener('submit', async (e) => {
     options: { data: {
       first_name: $('su-first').value.trim(),
       last_name: $('su-last').value.trim(),
-      dealership: $('su-dealer').value.trim(),
-      phone: $('su-phone').value.trim()
+      dealership: signupRole === 'consumer' ? '' : $('su-dealer').value.trim(),
+      phone: $('su-phone').value.trim(),
+      account_type: signupRole
     }}
   });
-  btn.disabled = false; btn.textContent = 'Create dealer account';
+  btn.disabled = false; btn.textContent = signupRole === 'consumer' ? 'Create your account' : 'Create dealer account';
   if (error) { showMsg($('auth-msg'), error.message, 'err'); return; }
   if (!data.session) {
     showMsg($('auth-msg'), 'Account created. Check your email to confirm, then log in.', 'ok');
@@ -348,16 +402,28 @@ async function onSignedIn(){
   profile = prof || { role:'dealer', email:user.email };
   authCard.classList.add('hidden'); appCard.classList.remove('hidden');
   $('nav-cta').textContent = 'My Portal';
-  $('portal-title').textContent = 'Dealer Portal';
-  $('portal-sub').textContent = 'Send the SpikerCars team what you’re looking for and track your requests.';
-  const isAdmin = profile.role === 'admin';
+  const role = profile.role;
+  const isAdmin = role === 'admin', isConsumer = role === 'consumer';
   $('hello').textContent = 'Welcome' + (profile.first_name ? ', ' + profile.first_name : '');
   $('hello-sub').textContent = (profile.dealership ? profile.dealership + ' · ' : '') + (profile.email || user.email);
-  $('role-chip').textContent = isAdmin ? 'Admin' : 'Dealer';
+  $('role-chip').textContent = isAdmin ? 'Admin' : (isConsumer ? 'Seller' : 'Dealer');
   $('role-chip').className = 'rolechip' + (isAdmin ? ' admin' : '');
-  $('request-form-wrap').classList.toggle('hidden', isAdmin);
-  $('list-title').textContent = isAdmin ? 'All dealer requests' : 'Your requests';
-  await loadRequests(isAdmin);
+  $('request-form-wrap').classList.toggle('hidden', isAdmin || isConsumer);
+  $('req-list-wrap').classList.toggle('hidden', isConsumer);
+  $('consumer-wrap').classList.toggle('hidden', !isConsumer);
+  $('sell-list-wrap').classList.toggle('hidden', !isConsumer);
+  if (isConsumer){
+    $('portal-eyebrow').textContent = 'Your Garage';
+    $('portal-title').textContent = 'Sell your car to SpikerCars';
+    $('portal-sub').textContent = 'Submit a car to sell and track your offers.';
+    await loadSellSubmissions();
+  } else {
+    $('portal-eyebrow').textContent = 'Dealer Portal';
+    $('portal-title').textContent = 'Dealer Portal';
+    $('portal-sub').textContent = 'Send the SpikerCars team what you’re looking for and track your requests.';
+    $('list-title').textContent = isAdmin ? 'All dealer requests' : 'Your requests';
+    await loadRequests(isAdmin);
+  }
 }
 
 // ----- Multi-vehicle acquisition list -----
@@ -427,6 +493,99 @@ $('request-form').addEventListener('submit', async (e) => {
   await loadRequests(profile.role === 'admin');
 });
 
+// ----- Consumer mode + sell flow -----
+let signupRole = 'dealer';
+let decoded = {};
+function setConsumerMode(on){
+  signupRole = on ? 'consumer' : 'dealer';
+  $('su-dealer-field').classList.toggle('hidden', on);
+  $('su-dealer').required = !on;
+  $('su-btn').textContent = on ? 'Create your account' : 'Create dealer account';
+  $('to-signup').textContent = on ? 'Sign up to sell' : 'Create an account';
+  if (on){
+    $('portal-eyebrow').textContent = 'Sell Your Car';
+    $('portal-title').textContent = 'Sell your car to SpikerCars';
+    $('portal-sub').textContent = 'Create an account or log in to get a cash offer on your car.';
+  }
+}
+function maybeConsumerHash(){
+  if (location.hash === '#sell'){
+    setConsumerMode(true);
+    if (appCard.classList.contains('hidden')){ $('signin-form').classList.add('hidden'); $('signup-form').classList.remove('hidden'); }
+    $('portal').scrollIntoView({ behavior:'smooth' });
+  }
+}
+window.addEventListener('hashchange', maybeConsumerHash);
+
+$('vin-lookup').addEventListener('click', async () => {
+  const vin = $('s-vin').value.trim();
+  if (vin.length < 11){ showMsg($('app-msg'), 'Enter a valid VIN (at least 11 characters).', 'err'); return; }
+  clearMsg($('app-msg'));
+  const btn = $('vin-lookup'); btn.disabled = true; btn.textContent = 'Looking up…';
+  try {
+    const r = await fetch(`https://vpic.nhtsa.dot.gov/api/vehicles/DecodeVinValues/${encodeURIComponent(vin)}?format=json`);
+    const j = await r.json();
+    const d = (j.Results && j.Results[0]) || {};
+    decoded = { year: d.ModelYear || null, make: d.Make || null, model: d.Model || null, trim: d.Trim || null };
+    const label = [decoded.year, decoded.make, decoded.model, decoded.trim].filter(Boolean).join(' ');
+    $('vin-result').innerHTML = decoded.make ? ('<strong>' + escapeHtml(label) + '</strong>') : '<span class="muted">We couldn\'t decode that VIN — you can still submit and we\'ll verify it.</span>';
+    $('vin-result').classList.remove('hidden');
+  } catch (e) {
+    $('vin-result').innerHTML = '<span class="muted">VIN lookup is unavailable right now — you can still submit.</span>';
+    $('vin-result').classList.remove('hidden');
+  }
+  btn.disabled = false; btn.textContent = 'Look up VIN';
+});
+
+document.querySelectorAll('input[name="s-replace"]').forEach(r => r.addEventListener('change', () => {
+  const yes = document.querySelector('input[name="s-replace"]:checked').value === 'yes';
+  $('replace-wrap').classList.toggle('hidden', !yes);
+}));
+
+$('sell-form').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const cond = $('s-cond').value;
+  if (!cond){ showMsg($('app-msg'), 'Please rate the condition from 1 to 10.', 'err'); return; }
+  const btn = $('s-btn'); btn.disabled = true; btn.innerHTML = '<span class="spin"></span>Submitting…';
+  clearMsg($('app-msg'));
+  const wantsReplace = document.querySelector('input[name="s-replace"]:checked').value === 'yes';
+  const row = {
+    vin: $('s-vin').value.trim(),
+    year: decoded.year ? Number(decoded.year) : null,
+    make: decoded.make || null, model: decoded.model || null, trim: decoded.trim || null,
+    mileage: vNum($('s-miles').value),
+    condition_score: Number(cond),
+    tires_replace: $('s-tires').value === 'yes',
+    windshield_replace: $('s-wind').value === 'yes',
+    wants_replacement: wantsReplace,
+    want_make: wantsReplace ? ($('w-make').value.trim() || null) : null,
+    want_model: wantsReplace ? ($('w-model').value.trim() || null) : null,
+    want_condition: wantsReplace ? $('w-cond').value : null,
+    want_year_min: wantsReplace ? vNum($('w-ymin').value) : null,
+    want_year_max: wantsReplace ? vNum($('w-ymax').value) : null
+  };
+  const { data: inserted, error } = await sb.from('sell_submissions').insert(row).select('id').single();
+  btn.disabled = false; btn.textContent = 'Submit my car';
+  if (error){ showMsg($('app-msg'), error.message, 'err'); return; }
+  if (inserted) sb.functions.invoke('notify-sell', { body: { record_id: inserted.id } }).catch(()=>{});
+  showMsg($('app-msg'), 'Thanks! Your car is in. We\'ll review it and get back to you with an offer.', 'ok');
+  $('sell-form').reset(); $('vin-result').classList.add('hidden'); $('replace-wrap').classList.add('hidden'); decoded = {};
+  await loadSellSubmissions();
+});
+
+async function loadSellSubmissions(){
+  const el = $('sell-list');
+  const { data, error } = await sb.from('sell_submissions').select('*').order('created_at', { ascending:false });
+  if (error){ el.innerHTML = '<div class="empty">Could not load: ' + escapeHtml(error.message) + '</div>'; return; }
+  if (!data || !data.length){ el.innerHTML = '<div class="empty">No cars submitted yet.</div>'; return; }
+  el.innerHTML = data.map(s => {
+    const label = [s.year, s.make, s.model, s.trim].filter(Boolean).join(' ') || s.vin || 'Vehicle';
+    const status = (s.status || 'received').replace(/_/g, ' ');
+    const sub = [ s.mileage ? Number(s.mileage).toLocaleString() + ' mi' : '', s.condition_score ? 'Condition ' + s.condition_score + '/10' : '' ].filter(Boolean).join(' · ');
+    return `<div class="veh-item"><div><div class="vi-main">${escapeHtml(label)}</div>${sub ? '<div class="vi-sub">' + escapeHtml(sub) + '</div>' : ''}</div><span class="statuschip">${escapeHtml(status)}</span></div>`;
+  }).join('');
+}
+
 // LOAD REQUESTS
 async function loadRequests(isAdmin){
   const el = $('req-list');
@@ -456,6 +615,7 @@ function escapeHtml(s){ return s.replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt
 (async () => {
   const { data: { session } } = await sb.auth.getSession();
   if (session) await onSignedIn(); else renderLoggedOut();
+  maybeConsumerHash();
 })();
 </script>
 </body>
