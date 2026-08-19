@@ -170,13 +170,14 @@ footer.site img{height:72px;opacity:.95}
       <!-- SIGN UP -->
       <form id="signup-form" class="hidden">
         <div class="grid2">
-          <div class="field"><label>Your name</label><input type="text" id="su-name" autocomplete="name" required></div>
-          <div class="field"><label>Dealership</label><input type="text" id="su-dealer" required></div>
+          <div class="field"><label>First name</label><input type="text" id="su-first" autocomplete="given-name" required></div>
+          <div class="field"><label>Last name</label><input type="text" id="su-last" autocomplete="family-name"></div>
         </div>
         <div class="grid2">
-          <div class="field"><label>Work email</label><input type="email" id="su-email" autocomplete="email" required></div>
+          <div class="field"><label>Dealership</label><input type="text" id="su-dealer" required></div>
           <div class="field"><label>Phone</label><input type="tel" id="su-phone" autocomplete="tel"></div>
         </div>
+        <div class="field"><label>Work email</label><input type="email" id="su-email" autocomplete="email" required></div>
         <div class="field"><label>Password</label><input type="password" id="su-pass" autocomplete="new-password" minlength="8" required><div class="muted" style="margin-top:5px">At least 8 characters.</div></div>
         <button class="btn btn-primary btn-block" type="submit" id="su-btn">Create dealer account</button>
         <div class="switch">Already have an account? <a id="to-signin">Log in</a></div>
@@ -285,7 +286,8 @@ $('signup-form').addEventListener('submit', async (e) => {
     email: $('su-email').value.trim(),
     password: $('su-pass').value,
     options: { data: {
-      full_name: $('su-name').value.trim(),
+      first_name: $('su-first').value.trim(),
+      last_name: $('su-last').value.trim(),
       dealership: $('su-dealer').value.trim(),
       phone: $('su-phone').value.trim()
     }}
@@ -325,14 +327,14 @@ async function onSignedIn(){
   const { data: { user } } = await sb.auth.getUser();
   if (!user) { renderLoggedOut(); return; }
   // load profile (role)
-  const { data: prof } = await sb.from('profiles').select('full_name,dealership,role,email').eq('id', user.id).maybeSingle();
+  const { data: prof } = await sb.from('profiles').select('first_name,last_name,dealership,role,email').eq('id', user.id).maybeSingle();
   profile = prof || { role:'dealer', email:user.email };
   authCard.classList.add('hidden'); appCard.classList.remove('hidden');
   $('nav-cta').textContent = 'My Portal';
   $('portal-title').textContent = 'Dealer Portal';
   $('portal-sub').textContent = 'Send the SpikerCars team what you’re looking for and track your requests.';
   const isAdmin = profile.role === 'admin';
-  $('hello').textContent = 'Welcome' + (profile.full_name ? ', ' + profile.full_name.split(' ')[0] : '');
+  $('hello').textContent = 'Welcome' + (profile.first_name ? ', ' + profile.first_name : '');
   $('hello-sub').textContent = (profile.dealership ? profile.dealership + ' · ' : '') + (profile.email || user.email);
   $('role-chip').textContent = isAdmin ? 'Admin' : 'Dealer';
   $('role-chip').className = 'rolechip' + (isAdmin ? ' admin' : '');
