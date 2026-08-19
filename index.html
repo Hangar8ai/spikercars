@@ -153,7 +153,7 @@ footer.site img{height:72px;opacity:.95}
   <div class="wrap">
     <div class="eyebrow">Dealer Portal</div>
     <h2 class="sec" id="portal-title">Submit a vehicle request</h2>
-    <p class="sec-sub" id="portal-sub">Log in or create your dealer account to send Spiker the units you're after and track every request in one place.</p>
+    <p class="sec-sub" id="portal-sub">Log in or create your dealer account to send the SpikerCars team the units you're after and track every request in one place.</p>
 
     <!-- AUTH (logged out) -->
     <div class="portal-card" id="auth-card">
@@ -225,7 +225,7 @@ footer.site img{height:72px;opacity:.95}
             <div class="field"><label>Quantity</label><input type="number" id="r-qty" min="1" value="1"></div>
           </div>
           <div class="field"><label>Notes</label><textarea id="r-notes" rows="3" placeholder="Colors, packages, must-haves, or anything specific for this request."></textarea></div>
-          <button class="btn btn-accent btn-block" type="submit" id="r-btn">Send request to Spiker</button>
+          <button class="btn btn-accent btn-block" type="submit" id="r-btn">Send request to the SpikerCars team</button>
         </form>
       </div>
 
@@ -243,7 +243,7 @@ footer.site img{height:72px;opacity:.95}
   <div class="wrap">
     <div class="eyebrow">Why dealers use us</div>
     <h2 class="sec">Bought right. Fewer hours. More gross.</h2>
-    <p class="sec-sub">Submit what you're looking for and it goes straight to Spiker, tracked, recorded, and moving. Call or text anytime; the portal just makes sure nothing slips while you're on the lot.</p>
+    <p class="sec-sub">Submit what you're looking for and it goes straight to the SpikerCars team, tracked, recorded, and moving. Call or text anytime; the portal just makes sure nothing slips while you're on the lot.</p>
     <div class="row">
       <span class="chip">Saves a used-car director <b>4 to 6 hours a day</b></span>
       <span class="chip">Buys on <b>90-day market patterns</b></span>
@@ -318,7 +318,7 @@ function renderLoggedOut(){
   authCard.classList.remove('hidden'); appCard.classList.add('hidden');
   $('nav-cta').textContent = 'Dealer Login';
   $('portal-title').textContent = 'Submit a vehicle request';
-  $('portal-sub').textContent = 'Log in or create your dealer account to send Spiker the units you’re after and track every request in one place.';
+  $('portal-sub').textContent = 'Log in or create your dealer account to send the SpikerCars team the units you’re after and track every request in one place.';
 }
 
 async function onSignedIn(){
@@ -330,7 +330,7 @@ async function onSignedIn(){
   authCard.classList.add('hidden'); appCard.classList.remove('hidden');
   $('nav-cta').textContent = 'My Portal';
   $('portal-title').textContent = 'Dealer Portal';
-  $('portal-sub').textContent = 'Send Spiker what you’re looking for and track your requests.';
+  $('portal-sub').textContent = 'Send the SpikerCars team what you’re looking for and track your requests.';
   const isAdmin = profile.role === 'admin';
   $('hello').textContent = 'Welcome' + (profile.full_name ? ', ' + profile.full_name.split(' ')[0] : '');
   $('hello-sub').textContent = (profile.dealership ? profile.dealership + ' · ' : '') + (profile.email || user.email);
@@ -360,9 +360,9 @@ $('request-form').addEventListener('submit', async (e) => {
     notes: $('r-notes').value.trim() || null
   };
   const { error } = await sb.from('vehicle_requests').insert(row);
-  btn.disabled = false; btn.textContent = 'Send request to Spiker';
+  btn.disabled = false; btn.textContent = 'Send request to the SpikerCars team';
   if (error) { showMsg($('app-msg'), error.message, 'err'); return; }
-  showMsg($('app-msg'), 'Request sent to Spiker. He’ll get on it.', 'ok');
+  showMsg($('app-msg'), 'Request sent to the SpikerCars team. We’ll get on it.', 'ok');
   $('request-form').reset(); $('r-qty').value = 1;
   await loadRequests(profile.role === 'admin');
 });
