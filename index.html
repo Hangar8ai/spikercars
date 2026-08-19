@@ -361,9 +361,10 @@ $('request-form').addEventListener('submit', async (e) => {
     quantity: num($('r-qty').value) || 1,
     notes: $('r-notes').value.trim() || null
   };
-  const { error } = await sb.from('vehicle_requests').insert(row);
+  const { data: inserted, error } = await sb.from('vehicle_requests').insert(row).select('id').single();
   btn.disabled = false; btn.textContent = 'Send request to the SpikerCars team';
   if (error) { showMsg($('app-msg'), error.message, 'err'); return; }
+  if (inserted) { sb.functions.invoke('notify-new-request', { body: { record_id: inserted.id } }).catch(()=>{}); }
   showMsg($('app-msg'), 'Request sent to the SpikerCars team. We’ll get on it.', 'ok');
   $('request-form').reset(); $('r-qty').value = 1;
   await loadRequests(profile.role === 'admin');
