@@ -113,7 +113,7 @@ footer.site img{height:66px;opacity:.95}
 
 /* portal page */
 .portalpage{background:var(--paper);min-height:calc(100vh - 220px);padding:36px 0 60px}
-.pcard{max-width:920px;margin:0 auto;background:#fff;border:1px solid var(--line);border-radius:20px;box-shadow:0 18px 50px -30px rgba(19,41,75,.4);overflow:hidden}
+.pcard{max-width:100%;margin:0 auto;background:#fff;border:1px solid var(--line);border-radius:20px;box-shadow:0 18px 50px -30px rgba(19,41,75,.4);overflow:hidden}
 .pcard-narrow{max-width:520px}
 .pcard-pad{padding:30px 32px}
 .portal-head{display:flex;align-items:center;justify-content:space-between;padding:22px 32px;border-bottom:1px solid var(--line);flex-wrap:wrap;gap:10px}
