@@ -82,7 +82,14 @@
       <!-- ======= BUY CARS ======= -->
       <div id="tab-buy" class="tabpane">
         <h3>Build your buy list</h3>
-        <p class="lead">Add every vehicle you're looking for and set how many units of each, then send the whole list at once.</p>
+        <div class="seg" id="buy-seg">
+          <button type="button" data-mode="detailed" class="on">Detailed</button>
+          <button type="button" data-mode="quick">Quick list</button>
+        </div>
+
+        <!-- DETAILED -->
+        <div id="buy-detailed">
+        <p class="lead">Add every vehicle you're looking for and set how many units of each, then send the whole list at once. Best when you're specific about a few cars.</p>
         <div id="veh-list"></div>
         <form id="request-form">
           <div class="grid3">
@@ -113,6 +120,24 @@
             <button class="btn btn-accent" type="submit" id="r-btn">Submit list to the SpikerCars team</button>
           </div>
         </form>
+        </div>
+
+        <!-- QUICK LIST -->
+        <div id="buy-quick" class="hidden">
+          <p class="lead">Buying a lot at once? Keep it to the essentials — one line per vehicle, no deep specs. Switch to <b>Detailed</b> anytime to be specific.</p>
+          <div style="overflow-x:auto">
+            <table class="ql">
+              <thead><tr><th style="width:26%">Make</th><th style="width:32%">Model</th><th class="ql-yr" style="width:20%">Year(s)</th><th style="width:14%">Units</th><th style="width:8%"></th></tr></thead>
+              <tbody id="ql-body"></tbody>
+            </table>
+          </div>
+          <button type="button" class="ql-add" id="ql-add">+ Add row</button>
+          <textarea class="paste" id="ql-paste" rows="2" placeholder='Or paste a list — e.g. "Ford F-150 x10, Toyota RAV4 x8, Chevy Silverado x6" — then click Parse.'></textarea>
+          <div class="form-actions">
+            <button class="btn btn-outline" type="button" id="ql-parse">Parse pasted list</button>
+            <button class="btn btn-accent" type="button" id="ql-submit">Submit list to the SpikerCars team</button>
+          </div>
+        </div>
       </div>
 
       <!-- ======= SELL CARS ======= -->
@@ -167,7 +192,7 @@
 </div></footer>
 
 <script type="module">
-import { sb, $, vNum, money, escapeHtml, showMsg, clearMsg, getUser, loadProfile, roleHome, signOut } from './sc.js';
+import { sb, $, vNum, money, escapeHtml, showMsg, clearMsg, getUser, loadProfile, roleHome, signOut, openModal, closeModal, removeSubmission } from './sc.js';
 
 const authCard = $('auth-card'), appCard = $('app-card');
 let profile = null, isAdmin = false;
@@ -290,6 +315,86 @@ $('request-form').addEventListener('submit', async (e) => {
   pendingVehicles = []; renderVehicleList(); clearVehicleForm();
 });
 
+// ---------- Buy mode toggle: Detailed vs Quick list ----------
+$('buy-seg').querySelectorAll('button').forEach(b => b.addEventListener('click', () => {
+  const mode = b.dataset.mode;
+  $('buy-seg').querySelectorAll('button').forEach(x => x.classList.toggle('on', x === b));
+  $('buy-detailed').classList.toggle('hidden', mode !== 'detailed');
+  $('buy-quick').classList.toggle('hidden', mode !== 'quick');
+  clearMsg($('app-msg'));
+}));
+
+// ---------- Quick list ----------
+function qlAddRow(v = {}){
+  const tr = document.createElement('tr');
+  tr.innerHTML = `<td><input class="ql-make" placeholder="Make" value="${escapeHtml(v.make||'')}"></td>
+    <td><input class="ql-model" placeholder="Model" value="${escapeHtml(v.model||'')}"></td>
+    <td class="ql-yr"><input class="ql-years" placeholder="e.g. 2020–2023" value="${escapeHtml(v.years||'')}"></td>
+    <td><input class="ql-units" inputmode="numeric" placeholder="Qty" value="${v.units!=null?escapeHtml(String(v.units)):''}"></td>
+    <td><button type="button" class="ql-rm" aria-label="Remove">×</button></td>`;
+  tr.querySelector('.ql-rm').addEventListener('click', () => { tr.remove(); if (!$('ql-body').children.length) qlAddRow(); });
+  $('ql-body').appendChild(tr);
+}
+function parseYears(str){
+  const nums = String(str||'').match(/\d{4}/g);
+  if (!nums || !nums.length) return { year_min:null, year_max:null };
+  const s = nums.map(Number).sort((a,b)=>a-b);
+  return { year_min: s[0], year_max: s.length>1 ? s[s.length-1] : s[0] };
+}
+function readQuickRows(){
+  const out = [];
+  $('ql-body').querySelectorAll('tr').forEach(tr => {
+    const make = tr.querySelector('.ql-make').value.trim();
+    if (!make) return;
+    const yr = parseYears(tr.querySelector('.ql-years').value);
+    out.push({
+      make, model: tr.querySelector('.ql-model').value.trim() || null, trim: null,
+      year_min: yr.year_min, year_max: yr.year_max,
+      mileage_max: null, budget_max: null, condition: 'any',
+      quantity: vNum(tr.querySelector('.ql-units').value) || 1, notes: null
+    });
+  });
+  return out;
+}
+$('ql-add').addEventListener('click', () => qlAddRow());
+$('ql-parse').addEventListener('click', () => {
+  const txt = $('ql-paste').value.trim();
+  if (!txt){ showMsg($('app-msg'), 'Paste a list first, then click Parse.', 'err'); return; }
+  const chunks = txt.split(/[\n,;]+/).map(s => s.trim()).filter(Boolean);
+  let added = 0;
+  chunks.forEach(c => {
+    // trailing quantity: "x10", "×10", "*10", "10 units", or a bare trailing number
+    let units = 1, rest = c;
+    const m = c.match(/(?:x|×|\*|qty|q)?\s*(\d{1,3})\s*(?:units?|pcs?)?\s*$/i);
+    if (m){ units = Number(m[1]); rest = c.slice(0, m.index).trim().replace(/[x×*]+$/i,'').trim(); }
+    const years = (rest.match(/\d{4}(?:\s*[-–]\s*\d{4})?/) || [''])[0];
+    rest = rest.replace(/\d{4}(?:\s*[-–]\s*\d{4})?/,'').trim();
+    const words = rest.split(/\s+/).filter(Boolean);
+    if (!words.length) return;
+    const make = words.shift();
+    qlAddRow({ make, model: words.join(' '), years, units });
+    added++;
+  });
+  if (added){ $('ql-paste').value=''; clearMsg($('app-msg')); showMsg($('app-msg'), `Added ${added} row${added>1?'s':''} — review and edit, then submit.`, 'ok'); }
+  else showMsg($('app-msg'), "Couldn't read that list — try one vehicle per line.", 'err');
+});
+$('ql-submit').addEventListener('click', async () => {
+  const all = readQuickRows();
+  if (!all.length){ showMsg($('app-msg'), 'Add at least one vehicle (a make is required).', 'err'); return; }
+  const btn = $('ql-submit'); btn.disabled = true; btn.innerHTML = '<span class="spin"></span>Sending…';
+  clearMsg($('app-msg'));
+  const batch_id = crypto.randomUUID();
+  const { error } = await sb.from('vehicle_requests').insert(all.map(v => ({ ...v, batch_id })));
+  btn.disabled = false; btn.textContent = 'Submit list to the SpikerCars team';
+  if (error){ showMsg($('app-msg'), error.message, 'err'); return; }
+  sb.functions.invoke('notify-new-request', { body: { batch_id } }).catch(()=>{});
+  const totalUnits = all.reduce((n,v) => n + (v.quantity||1), 0);
+  showMsg($('app-msg'), `Buy list sent — ${all.length} vehicle${all.length>1?'s':''}, ${totalUnits} total unit${totalUnits>1?'s':''}. We'll get on it.`, 'ok');
+  $('ql-body').innerHTML=''; qlAddRow(); qlAddRow(); qlAddRow();
+});
+// seed quick list with a few empty rows
+qlAddRow(); qlAddRow(); qlAddRow();
+
 // ================= SELL: multi-unit aged inventory =================
 let pendingUnits = [], unitDecoded = {};
 const parseMoney = (s) => { const n = Number(String(s).replace(/[^0-9.]/g,'')); return isFinite(n) && n > 0 ? n : null; };
@@ -372,6 +477,12 @@ $('unit-form').addEventListener('submit', async (e) => {
 });
 
 // ================= ACTIVITY =================
+let activityRows = [];
+const REM_TYPE = { buy:'buy', sell:'dealer_sell', consumer:'consumer' };
+
+function buyVeh(r){ return [ [r.year_min,r.year_max].filter(Boolean).join('–'), r.make, r.model, r.trim ].filter(Boolean).join(' ') || 'Any vehicle'; }
+function otherVeh(r){ return [r.year,r.make,r.model,r.trim].filter(Boolean).join(' ') || r.vin || 'Vehicle'; }
+
 async function loadActivity(){
   const el = $('act-list');
   el.innerHTML = '<div class="empty">Loading…</div>';
@@ -379,36 +490,118 @@ async function loadActivity(){
     sb.from('vehicle_requests').select('*').order('created_at', { ascending:false }),
     sb.from('dealer_sell_units').select('*').order('created_at', { ascending:false })
   ];
-  // Admins also see consumer "sell my car" submissions.
-  if (isAdmin) queries.push(sb.from('sell_submissions').select('*').order('created_at', { ascending:false }));
+  if (isAdmin){
+    queries.push(sb.from('sell_submissions').select('*').order('created_at', { ascending:false }));
+    queries.push(sb.from('profiles').select('id,first_name,last_name,dealership,email,phone'));
+  }
   const results = await Promise.all(queries);
-  const buys = results[0].data || [], sells = results[1].data || [], consumers = isAdmin ? (results[2].data || []) : [];
-  const rows = [];
-  buys.forEach(r => {
-    const veh = [ [r.year_min,r.year_max].filter(Boolean).join('-'), r.make, r.model, r.trim ].filter(Boolean).join(' ') || 'Any vehicle';
-    const detail = [ r.quantity ? r.quantity+' unit'+(r.quantity>1?'s':'') : '', r.mileage_max ? '≤'+Number(r.mileage_max).toLocaleString()+' mi' : '', r.budget_max ? money(r.budget_max) : '' ].filter(Boolean).join(' · ');
-    rows.push({ t:'buy', label:'Buy', veh, detail, status:r.status||'new', at:r.created_at });
-  });
-  sells.forEach(u => {
-    const veh = [u.year,u.make,u.model,u.trim].filter(Boolean).join(' ') || u.vin || 'Vehicle';
-    const detail = [ 'Asking '+money(u.asking_price), u.mileage ? Number(u.mileage).toLocaleString()+' mi' : '' ].filter(Boolean).join(' · ');
-    rows.push({ t:'sell', label:'Dealer sell', veh, detail, status:u.status||'new', at:u.created_at });
-  });
-  consumers.forEach(s => {
-    const veh = [s.year,s.make,s.model,s.trim].filter(Boolean).join(' ') || s.vin || 'Vehicle';
-    const detail = [ s.mileage ? Number(s.mileage).toLocaleString()+' mi' : '', s.condition_score ? 'Cond '+s.condition_score+'/10' : '', s.wants_replacement ? 'wants replacement' : '' ].filter(Boolean).join(' · ');
-    rows.push({ t:'consumer', label:'Consumer', veh, detail, status:s.status||'received', at:s.created_at });
-  });
-  rows.sort((a,b) => new Date(b.at) - new Date(a.at));
-  if (!rows.length){ el.innerHTML = '<div class="empty">No activity yet. Send a buy list or list a unit to sell.</div>'; return; }
-  el.innerHTML = `<table class="req"><thead><tr><th>Type</th><th>Vehicle</th><th>Detail</th><th>Status</th><th>Date</th></tr></thead><tbody>` +
-    rows.map(r => `<tr>
+  const buys = results[0].data || [], sells = results[1].data || [];
+  const consumers = isAdmin ? (results[2].data || []) : [];
+  const profMap = {};
+  if (isAdmin) (results[3].data || []).forEach(p => profMap[p.id] = p);
+
+  activityRows = [];
+  buys.forEach(r => activityRows.push({ t:'buy', label:'Buy', veh:buyVeh(r), detail:[ r.quantity ? r.quantity+' unit'+(r.quantity>1?'s':'') : '', r.mileage_max ? '≤'+Number(r.mileage_max).toLocaleString()+' mi' : '', r.budget_max ? money(r.budget_max) : '' ].filter(Boolean).join(' · '), status:r.status||'new', at:r.created_at, raw:r, prof:profMap[r.dealer_id] }));
+  sells.forEach(u => activityRows.push({ t:'sell', label:'Dealer sell', veh:otherVeh(u), detail:[ 'Asking '+money(u.asking_price), u.mileage ? Number(u.mileage).toLocaleString()+' mi' : '' ].filter(Boolean).join(' · '), status:u.status||'new', at:u.created_at, raw:u, prof:profMap[u.dealer_id] }));
+  consumers.forEach(s => activityRows.push({ t:'consumer', label:'Consumer', veh:otherVeh(s), detail:[ s.mileage ? Number(s.mileage).toLocaleString()+' mi' : '', s.condition_score ? 'Cond '+s.condition_score+'/10' : '', s.wants_replacement ? 'wants replacement' : '' ].filter(Boolean).join(' · '), status:s.status||'received', at:s.created_at, raw:s, prof:profMap[s.user_id] }));
+  activityRows.sort((a,b) => new Date(b.at) - new Date(a.at));
+
+  if (!activityRows.length){ el.innerHTML = '<div class="empty">No activity yet. Send a buy list or list a unit to sell.</div>'; return; }
+
+  const whoCell = (r) => {
+    const p = r.prof || {};
+    if (r.t === 'consumer'){ const nm = [p.first_name,p.last_name].filter(Boolean).join(' ') || 'Seller'; return `<div class="who-name">${escapeHtml(nm)}</div><div class="who-sub">Seller · consumer</div>`; }
+    const nm = [p.first_name,p.last_name].filter(Boolean).join(' ');
+    return `<div class="who-name">${escapeHtml(p.dealership || 'Dealer')}</div>${nm ? '<div class="who-sub">'+escapeHtml(nm)+'</div>' : ''}`;
+  };
+  const cols = isAdmin ? ['Type','Vehicle','Submitted by','Detail','Status','Date'] : ['Type','Vehicle','Detail','Status','Date'];
+  el.innerHTML = `<div class="rowhint"><span class="chev">▸</span> Click any row to open the full details.</div>` +
+    `<table class="req"><thead><tr>${cols.map(c=>`<th>${c}</th>`).join('')}</tr></thead><tbody>` +
+    activityRows.map((r,i) => `<tr class="clickable" data-idx="${i}">
       <td><span class="typechip ${r.t}">${escapeHtml(r.label)}</span></td>
       <td><b>${escapeHtml(r.veh)}</b></td>
+      ${isAdmin ? '<td>'+whoCell(r)+'</td>' : ''}
       <td class="muted">${escapeHtml(r.detail)}</td>
       <td><span class="status ${escapeHtml(r.status)}">${escapeHtml(String(r.status).replace(/_/g,' '))}</span></td>
       <td class="muted">${new Date(r.at).toLocaleDateString()}</td>
     </tr>`).join('') + `</tbody></table>`;
+  el.querySelectorAll('tr.clickable').forEach(tr => tr.addEventListener('click', () => openDetail(activityRows[Number(tr.dataset.idx)])));
+}
+
+// ---------- detail modal + remove ----------
+function drow(l,v){ return v==null||v===''?'':`<div class="drow"><span class="l">${escapeHtml(l)}</span><span class="v">${escapeHtml(String(v))}</span></div>`; }
+function detailRowsHtml(item){
+  const r = item.raw, p = item.prof || {};
+  const nm = [p.first_name,p.last_name].filter(Boolean).join(' ');
+  const contact = [p.email, p.phone].filter(Boolean).join(' · ');
+  const submitted = new Date(r.created_at).toLocaleString([], { dateStyle:'medium', timeStyle:'short' });
+  let rows = '';
+  if (isAdmin){
+    rows += drow('Submitted by', item.t==='consumer' ? (nm||'Seller') : ((p.dealership||'Dealer') + (nm ? ' — '+nm : '')));
+    rows += drow('Contact', contact);
+  }
+  if (item.t === 'buy'){
+    rows += drow('Units wanted', r.quantity);
+    rows += drow('Year range', [r.year_min,r.year_max].filter(Boolean).join('–'));
+    rows += drow('Max mileage', r.mileage_max ? Number(r.mileage_max).toLocaleString() : '');
+    rows += drow('Target budget', r.budget_max ? money(r.budget_max) : '');
+    rows += drow('Condition', r.condition && r.condition!=='any' ? r.condition : 'Any');
+    rows += drow('Notes', r.notes);
+  } else if (item.t === 'sell'){
+    rows += drow('VIN', r.vin);
+    rows += drow('Mileage', r.mileage ? Number(r.mileage).toLocaleString()+' mi' : '');
+    rows += drow('Days on lot', r.days_on_lot);
+    rows += drow('Title', r.title);
+    rows += drow('Condition', r.condition_score ? r.condition_score+' / 10' : '');
+    rows += drow('Asking price', money(r.asking_price));
+    rows += drow('Notes', r.notes);
+  } else {
+    rows += drow('VIN', r.vin);
+    rows += drow('Mileage', r.mileage ? Number(r.mileage).toLocaleString()+' mi' : '');
+    rows += drow('Condition', r.condition_score ? r.condition_score+' / 10' : '');
+    rows += drow('Tires need replacing', r.tires_replace ? 'Yes' : 'No');
+    rows += drow('Windshield need replacing', r.windshield_replace ? 'Yes' : 'No');
+    rows += drow('Replacing this car', r.wants_replacement ? 'Yes' : 'No');
+    if (r.wants_replacement) rows += drow('Looking to buy', [[r.want_year_min,r.want_year_max].filter(Boolean).join('–'), r.want_make, r.want_model, (r.want_condition&&r.want_condition!=='either'?'('+r.want_condition+')':'')].filter(Boolean).join(' '));
+  }
+  rows += drow('Status', String(item.status).replace(/_/g,' '));
+  rows += drow('Submitted', submitted);
+  return rows;
+}
+function openDetail(item){
+  const eyebrow = `${item.label} · ${String(item.status).replace(/_/g,' ')}`;
+  const canRemove = item.status !== 'withdrawn';
+  const foot = canRemove
+    ? `<button class="btn btn-danger" id="md-remove">Remove submission</button><button class="btn btn-primary" id="md-close">Close</button>`
+    : `<button class="btn btn-primary" id="md-close">Close</button>`;
+  const card = openModal(`
+    <div class="modal-head"><div class="k">${escapeHtml(eyebrow)}</div><h3>${escapeHtml(item.veh)}</h3></div>
+    <div class="modal-body">${detailRowsHtml(item)}</div>
+    <div class="modal-foot ${canRemove?'':'one'}">${foot}</div>`);
+  card.querySelector('#md-close').addEventListener('click', closeModal);
+  const rm = card.querySelector('#md-remove');
+  if (rm) rm.addEventListener('click', () => confirmRemove(item));
+}
+function confirmRemove(item){
+  const card = openModal(`
+    <div class="confirm-card">
+      <h3>Remove this submission?</h3>
+      <p>The SpikerCars team will be notified, and you'll get a confirmation email. This can't be undone.</p>
+      <div class="confirm-row"><button class="btn btn-primary" id="cf-cancel">Cancel</button><button class="btn btn-danger" id="cf-go">Remove</button></div>
+    </div>`);
+  card.querySelector('#cf-cancel').addEventListener('click', () => openDetail(item));
+  card.querySelector('#cf-go').addEventListener('click', async () => {
+    const go = card.querySelector('#cf-go'); go.disabled = true; go.innerHTML = '<span class="spin"></span>Removing…';
+    try {
+      await removeSubmission(REM_TYPE[item.t], item.raw.id);
+      closeModal();
+      showMsg($('app-msg'), 'Submission removed. A confirmation email is on its way.', 'ok');
+      await loadActivity();
+    } catch (err){
+      go.disabled = false; go.textContent = 'Remove';
+      showMsg($('app-msg'), 'Could not remove: ' + err.message, 'err'); closeModal();
+    }
+  });
 }
 
 // init

@@ -125,7 +125,7 @@
 </div></footer>
 
 <script type="module">
-import { sb, $, vNum, escapeHtml, showMsg, clearMsg, getUser, loadProfile, signOut } from './sc.js';
+import { sb, $, vNum, money, escapeHtml, showMsg, clearMsg, getUser, loadProfile, signOut, openModal, closeModal, removeSubmission } from './sc.js';
 
 const authCard = $('auth-card'), appCard = $('app-card');
 let profile = null, decoded = {};
@@ -233,17 +233,64 @@ $('sell-form').addEventListener('submit', async (e) => {
   await loadSellSubmissions();
 });
 
+let sellRows = [];
 async function loadSellSubmissions(){
   const el = $('sell-list');
   const { data, error } = await sb.from('sell_submissions').select('*').order('created_at', { ascending:false });
   if (error){ el.innerHTML = '<div class="empty">Could not load: ' + escapeHtml(error.message) + '</div>'; return; }
   if (!data || !data.length){ el.innerHTML = '<div class="empty">No cars submitted yet.</div>'; return; }
-  el.innerHTML = data.map(s => {
+  sellRows = data;
+  el.innerHTML = `<div class="rowhint"><span class="chev">▸</span> Tap a car to see the details or remove it.</div>` + data.map((s,i) => {
     const label = [s.year, s.make, s.model, s.trim].filter(Boolean).join(' ') || s.vin || 'Vehicle';
     const status = (s.status || 'received').replace(/_/g, ' ');
     const sub = [ s.mileage ? Number(s.mileage).toLocaleString() + ' mi' : '', s.condition_score ? 'Condition ' + s.condition_score + '/10' : '' ].filter(Boolean).join(' · ');
-    return `<div class="veh-item"><div><div class="vi-main">${escapeHtml(label)}</div>${sub ? '<div class="vi-sub">' + escapeHtml(sub) + '</div>' : ''}</div><span class="statuschip">${escapeHtml(status)}</span></div>`;
+    return `<div class="veh-item clickable" data-idx="${i}"><div><div class="vi-main">${escapeHtml(label)}</div>${sub ? '<div class="vi-sub">' + escapeHtml(sub) + '</div>' : ''}</div><span class="statuschip">${escapeHtml(status)}</span></div>`;
   }).join('');
+  el.querySelectorAll('.veh-item.clickable').forEach(d => d.addEventListener('click', () => openDetail(sellRows[Number(d.dataset.idx)])));
+}
+
+function drow(l,v){ return v==null||v===''?'':`<div class="drow"><span class="l">${escapeHtml(l)}</span><span class="v">${escapeHtml(String(v))}</span></div>`; }
+function openDetail(s){
+  const label = [s.year, s.make, s.model, s.trim].filter(Boolean).join(' ') || s.vin || 'Vehicle';
+  const status = (s.status || 'received').replace(/_/g,' ');
+  const canRemove = s.status !== 'withdrawn';
+  let rows = drow('VIN', s.vin) + drow('Mileage', s.mileage ? Number(s.mileage).toLocaleString()+' mi' : '') +
+    drow('Condition', s.condition_score ? s.condition_score+' / 10' : '') +
+    drow('Tires need replacing', s.tires_replace ? 'Yes':'No') + drow('Windshield need replacing', s.windshield_replace ? 'Yes':'No') +
+    drow('Replacing this car', s.wants_replacement ? 'Yes':'No');
+  if (s.wants_replacement) rows += drow('Looking to buy', [[s.want_year_min,s.want_year_max].filter(Boolean).join('–'), s.want_make, s.want_model, (s.want_condition&&s.want_condition!=='either'?'('+s.want_condition+')':'')].filter(Boolean).join(' '));
+  rows += drow('Status', status) + drow('Submitted', new Date(s.created_at).toLocaleString([], { dateStyle:'medium', timeStyle:'short' }));
+  const foot = canRemove
+    ? `<button class="btn btn-danger" id="md-remove">Remove submission</button><button class="btn btn-primary" id="md-close">Close</button>`
+    : `<button class="btn btn-primary" id="md-close">Close</button>`;
+  const card = openModal(`
+    <div class="modal-head"><div class="k">Your car · ${escapeHtml(status)}</div><h3>${escapeHtml(label)}</h3></div>
+    <div class="modal-body">${rows}</div>
+    <div class="modal-foot ${canRemove?'':'one'}">${foot}</div>`);
+  card.querySelector('#md-close').addEventListener('click', closeModal);
+  const rm = card.querySelector('#md-remove');
+  if (rm) rm.addEventListener('click', () => confirmRemove(s));
+}
+function confirmRemove(s){
+  const card = openModal(`
+    <div class="confirm-card">
+      <h3>Remove this submission?</h3>
+      <p>The SpikerCars team will be notified, and you'll get a confirmation email. This can't be undone.</p>
+      <div class="confirm-row"><button class="btn btn-primary" id="cf-cancel">Cancel</button><button class="btn btn-danger" id="cf-go">Remove</button></div>
+    </div>`);
+  card.querySelector('#cf-cancel').addEventListener('click', () => openDetail(s));
+  card.querySelector('#cf-go').addEventListener('click', async () => {
+    const go = card.querySelector('#cf-go'); go.disabled = true; go.innerHTML = '<span class="spin"></span>Removing…';
+    try {
+      await removeSubmission('consumer', s.id);
+      closeModal();
+      showMsg($('app-msg'), 'Removed. A confirmation email is on its way.', 'ok');
+      await loadSellSubmissions();
+    } catch (err){
+      go.disabled = false; go.textContent = 'Remove';
+      closeModal(); showMsg($('app-msg'), 'Could not remove: ' + err.message, 'err');
+    }
+  });
 }
 
 (async () => {

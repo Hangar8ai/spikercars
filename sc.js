@@ -60,3 +60,25 @@ export function enhancePasswordFields(){
 }
 if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', enhancePasswordFields);
 else enhancePasswordFields();
+
+// ---- Modal ----
+function escClose(e){ if (e.key === 'Escape') closeModal(); }
+export function openModal(innerHtml){
+  closeModal();
+  const ov = document.createElement('div');
+  ov.className = 'modal-ov'; ov.id = 'sc-modal-ov';
+  ov.innerHTML = `<div class="modal-card">${innerHtml}</div>`;
+  document.body.appendChild(ov);
+  ov.addEventListener('click', e => { if (e.target === ov) closeModal(); });
+  document.addEventListener('keydown', escClose);
+  return ov.querySelector('.modal-card');
+}
+export function closeModal(){ const ov = $('sc-modal-ov'); if (ov) ov.remove(); document.removeEventListener('keydown', escClose); }
+
+// ---- Remove submission (soft delete via edge function) ----
+export async function removeSubmission(type, id){
+  const { data, error } = await sb.functions.invoke('remove-submission', { body: { type, id } });
+  if (error) throw new Error(error.message || 'Remove failed');
+  if (data && data.error) throw new Error(data.error);
+  return data;
+}
