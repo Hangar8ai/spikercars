@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sell to Spiker | Get a Cash Offer for Your Car</title>
+<meta name="description" content="Sell your car to Spiker — a real cash offer, no dealership hassle, no haggling. Tell us about your car and Spiker calls you.">
+<link rel="icon" href="spikercars-logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,300;0,400;0,500;0,600;0,700;1,700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+<style>
+/* page-scoped: numbered steps on the navy band */
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:28px;margin-top:8px}
+.step .n{width:38px;height:38px;border-radius:50%;background:var(--carolina);color:var(--navy);font-weight:700;display:flex;align-items:center;justify-content:center;font-size:16px;margin-bottom:12px}
+.step h3{margin:0 0 6px;font-size:18px;font-weight:700;color:#fff}
+.step p{margin:0;font-size:14.5px;line-height:1.5;color:#cfdcec;font-weight:300}
+@media(max-width:720px){.steps{grid-template-columns:1fr;gap:20px}}
+.hp{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}
+</style>
+</head>
+<body>
+
+<header class="site"><div class="wrap" style="justify-content:flex-start">
+  <a href="index.html" aria-label="SpikerCars home"><img src="spikercars-logo.png" alt="SpikerCars"></a>
+</div></header>
+
+<section class="hero">
+  <div class="wrap">
+    <div>
+      <div class="badge">As heard on the radio</div>
+      <h1 class="text-wrap-balance">Sell your car to Spiker. <span class="c">Skip the dealership.</span></h1>
+      <p class="lead">No haggling, no lowball trade-in, no sitting at a dealership all day. Tell us about your car and Spiker comes back with a real cash offer.</p>
+      <div class="cta-row">
+        <a class="btn btn-accent" href="#lead-form">Get my cash offer</a>
+        <a class="btn btn-ghost" href="#why">Why sell to Spiker</a>
+      </div>
+    </div>
+
+    <div class="authcard" id="lead-form">
+      <div id="lead-live">
+        <h3>Get your cash offer</h3>
+        <div class="sub">Takes 30 seconds. Spiker reviews it and calls you — no account needed.</div>
+        <div class="msg" id="lead-msg"></div>
+        <form id="rl-form">
+          <div class="grid2">
+            <div class="field"><label>First name</label><input type="text" id="rl-first" autocomplete="given-name" required></div>
+            <div class="field"><label>Last name</label><input type="text" id="rl-last" autocomplete="family-name"></div>
+          </div>
+          <div class="field"><label>Phone <span class="req">*</span></label><input type="tel" id="rl-phone" autocomplete="tel" placeholder="(555) 123-4567" required></div>
+          <div class="grid3">
+            <div class="field"><label>Year</label><input type="number" id="rl-year" min="1900" max="2100" placeholder="2020"></div>
+            <div class="field"><label>Make</label><input type="text" id="rl-make" placeholder="e.g. Ford"></div>
+            <div class="field"><label>Model</label><input type="text" id="rl-model" placeholder="e.g. F-150"></div>
+          </div>
+          <div class="field"><label>Mileage</label><input type="number" id="rl-miles" min="0" placeholder="e.g. 62,000"></div>
+          <div class="field"><label>Anything else? <span class="muted" style="font-weight:400">(optional)</span></label><textarea id="rl-notes" rows="2" placeholder="Condition, extras, when you're looking to sell…"></textarea></div>
+          <input type="text" id="rl-company" class="hp" tabindex="-1" autocomplete="off" aria-hidden="true">
+          <button class="btn btn-accent btn-block" type="submit" id="rl-btn" style="margin-top:4px">Get my cash offer</button>
+          <div class="switch" style="margin-top:12px">We'll never share your info. Spiker just gives you a call.</div>
+        </form>
+      </div>
+      <div id="lead-done" class="hidden" style="text-align:center;padding:16px 4px">
+        <div style="font-size:40px;line-height:1">✅</div>
+        <h3 style="margin:10px 0 4px" id="done-hd">You're all set!</h3>
+        <p class="sub" id="done-sub" style="margin:0">Spiker will reach out shortly.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="why" class="section-center">
+  <div class="wrap">
+    <div class="eyebrow">Why sell to Spiker</div>
+    <h2 class="sec">A better way to sell your car</h2>
+    <p class="sec-sub">Selling to a dealership means a lowball trade and a long afternoon. Selling to Spiker means a real offer and a quick handoff.</p>
+    <div class="pillars">
+      <div class="pillar"><div class="pn">01</div><h3>A real cash offer</h3><p>You deal with an actual buyer, not a sales floor. Spiker makes a genuine offer on your car.</p></div>
+      <div class="pillar"><div class="pn">02</div><h3>More than a trade-in</h3><p>Dealerships bury your car's value inside a trade. Spiker pays for the car itself — often more.</p></div>
+      <div class="pillar"><div class="pn">03</div><h3>Zero hassle</h3><p>No haggling, no waiting room, no pressure to buy something else. Sell it and move on with your day.</p></div>
+      <div class="pillar"><div class="pn">04</div><h3>Fast &amp; local</h3><p>Give us a few details and Spiker follows up quickly to work out the offer and get you paid.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="feature">
+  <img class="glow" src="spikercars-logo.png" alt="">
+  <div class="wrap" style="display:block">
+    <div class="eyebrow">How it works</div>
+    <h2 class="text-wrap-balance" style="font-size:33px;line-height:1.12;margin:12px 0 22px;font-weight:700">Three steps to a cash offer.</h2>
+    <div class="steps">
+      <div class="step"><div class="n">1</div><h3>Tell us about your car</h3><p>Your name, number, and a few details on the vehicle. That's it.</p></div>
+      <div class="step"><div class="n">2</div><h3>Spiker reviews &amp; calls</h3><p>He looks it over and reaches out with a real cash offer — no obligation.</p></div>
+      <div class="step"><div class="n">3</div><h3>Get paid</h3><p>Agree on the number and get paid, without the dealership runaround.</p></div>
+    </div>
+    <div style="margin-top:26px"><a class="btn btn-accent" href="#lead-form">Get my cash offer</a></div>
+  </div>
+</section>
+
+<footer class="site"><div class="wrap">
+  <img src="spikercars-logo.png" alt="SpikerCars">
+  <div>SpikerCars · SNS Enterprises LLC · Dealer Acquisition Specialist · spikercars.com</div>
+</div></footer>
+
+<script type="module">
+import { sb, $, showMsg, clearMsg } from './sc.js';
+
+$('rl-form').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const phone = $('rl-phone').value.trim();
+  const first = $('rl-first').value.trim();
+  if (!phone){ showMsg($('lead-msg'), 'Please add a phone number so Spiker can reach you.', 'err'); return; }
+  const btn = $('rl-btn'); btn.disabled = true; btn.innerHTML = '<span class="spin"></span>Sending…';
+  clearMsg($('lead-msg'));
+  const body = {
+    first_name: first,
+    last_name: $('rl-last').value.trim(),
+    phone,
+    year: $('rl-year').value.trim(),
+    make: $('rl-make').value.trim(),
+    model: $('rl-model').value.trim(),
+    mileage: $('rl-miles').value.trim(),
+    notes: $('rl-notes').value.trim(),
+    company: $('rl-company').value.trim() // honeypot
+  };
+  const { data, error } = await sb.functions.invoke('submit-radio-lead', { body });
+  if (error || (data && data.error)){
+    btn.disabled = false; btn.textContent = 'Get my cash offer';
+    showMsg($('lead-msg'), (data && data.error) || 'Something went wrong — please try again, or call us.', 'err');
+    return;
+  }
+  $('done-hd').textContent = first ? `Thanks, ${first}!` : 'Thanks!';
+  $('done-sub').textContent = `Spiker will call you at ${phone} shortly with a cash offer.`;
+  $('lead-live').classList.add('hidden');
+  $('lead-done').classList.remove('hidden');
+});
+</script>
+</body>
+</html>
