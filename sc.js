@@ -26,7 +26,7 @@ export async function loadProfile(user){
   return data || { role: 'dealer', email: user.email };
 }
 // Where a given role belongs.
-export function roleHome(role){ return role === 'consumer' ? 'sell.html' : 'dealer.html'; }
+export function roleHome(role){ return role === 'consumer' ? 'garage.html' : 'dealer.html'; }
 
 export async function signOut(redirect = 'index.html'){
   await sb.auth.signOut();

@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SpikerCars | Sell Your Car</title>
+<meta name="description" content="Sell your car to the SpikerCars team. Enter your VIN and a few details for a cash offer.">
+<link rel="icon" href="spikercars-logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,300;0,400;0,500;0,600;0,700;1,700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<header class="site"><div class="wrap">
+  <a href="index.html"><img src="spikercars-logo.png" alt="SpikerCars"></a>
+  <nav class="nav-links">
+    <a href="index.html">Home</a>
+    <a href="index.html#services">Services</a>
+    <a href="dealer.html">Dealer Portal</a>
+  </nav>
+</div></header>
+
+<div class="portalpage"><div class="wrap">
+
+  <!-- AUTH (logged out) -->
+  <div class="pcard pcard-narrow pcard-pad" id="auth-card">
+    <div class="msg" id="auth-msg"></div>
+
+    <form id="signin-form">
+      <h3 style="margin:0 0 4px;color:var(--navy)">Sign in</h3>
+      <p class="muted" style="margin:0 0 18px">Track your car and any offers in one place.</p>
+      <div class="field"><label>Email</label><input type="email" id="si-email" autocomplete="email" required></div>
+      <div class="field"><label>Password</label><input type="password" id="si-pass" autocomplete="current-password" required></div>
+      <button class="btn btn-primary btn-block" type="submit" id="si-btn">Log in</button>
+      <div class="switch">New here? <a id="to-signup">Sign up to sell</a></div>
+    </form>
+
+    <form id="signup-form" class="hidden">
+      <h3 style="margin:0 0 4px;color:var(--navy)">Sell your car</h3>
+      <p class="muted" style="margin:0 0 18px">Create a quick account to get a cash offer from the SpikerCars team.</p>
+      <div class="grid2">
+        <div class="field"><label>First name</label><input type="text" id="su-first" autocomplete="given-name" required></div>
+        <div class="field"><label>Last name</label><input type="text" id="su-last" autocomplete="family-name"></div>
+      </div>
+      <div class="grid2">
+        <div class="field"><label>Email</label><input type="email" id="su-email" autocomplete="email" required></div>
+        <div class="field"><label>Phone</label><input type="tel" id="su-phone" autocomplete="tel"></div>
+      </div>
+      <div class="field"><label>Password</label><input type="password" id="su-pass" autocomplete="new-password" minlength="8" required><div class="muted" style="margin-top:5px">At least 8 characters.</div></div>
+      <button class="btn btn-primary btn-block" type="submit" id="su-btn">Create your account</button>
+      <div class="switch">Already have an account? <a id="to-signin">Log in</a></div>
+    </form>
+  </div>
+
+  <!-- APP (logged in as consumer) -->
+  <div class="pcard hidden" id="app-card">
+    <div class="portal-head">
+      <div>
+        <h3 id="hello">Your garage</h3>
+        <div class="muted" id="hello-sub"></div>
+      </div>
+      <div style="display:flex;align-items:center;gap:12px">
+        <span class="rolechip" id="role-chip">Seller</span>
+        <button class="btn btn-primary" id="logout-btn" style="padding:9px 16px;font-size:13px">Log out</button>
+      </div>
+    </div>
+
+    <div class="tabbody">
+      <div class="msg" id="app-msg"></div>
+
+      <h3>Sell your car to the SpikerCars team</h3>
+      <p class="lead">Enter your VIN and a few details. We'll review it and come back with a cash offer.</p>
+      <form id="sell-form">
+        <div class="grid2">
+          <div class="field"><label>VIN</label><input type="text" id="s-vin" maxlength="17" placeholder="17-character VIN" autocomplete="off" required></div>
+          <div class="field" style="display:flex;flex-direction:column;justify-content:flex-end"><button type="button" class="btn btn-outline btn-block" id="vin-lookup">Look up VIN</button></div>
+        </div>
+        <div id="vin-result" class="vin-result hidden"></div>
+        <div class="grid3">
+          <div class="field"><label>Mileage</label><input type="number" id="s-miles" min="0" placeholder="e.g. 48000" required></div>
+          <div class="field"><label>Condition (1–10)</label>
+            <select id="s-cond" required><option value="">Select…</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option><option>8</option><option>9</option><option>10</option></select>
+          </div>
+          <div class="field"><label>Tires need replacing?</label><select id="s-tires"><option value="no">No</option><option value="yes">Yes</option></select></div>
+        </div>
+        <div class="grid3">
+          <div class="field"><label>Windshield need replacing?</label><select id="s-wind"><option value="no">No</option><option value="yes">Yes</option></select></div>
+          <div class="field" style="grid-column:span 2"><label>Are you replacing this car?</label>
+            <div class="radio-row">
+              <label><input type="radio" name="s-replace" value="no" checked> Just selling</label>
+              <label><input type="radio" name="s-replace" value="yes"> Selling &amp; replacing</label>
+            </div>
+          </div>
+        </div>
+        <div id="replace-wrap" class="hidden">
+          <div class="subhead">What are you looking to buy?</div>
+          <p class="muted" style="margin:0 0 12px;font-size:12.5px">We'll pass this to the dealer buying your car so they can help you find it. The SpikerCars team won't source it directly.</p>
+          <div class="grid2">
+            <div class="field"><label>Make</label><input type="text" id="w-make" placeholder="e.g. Honda"></div>
+            <div class="field"><label>Model</label><input type="text" id="w-model" placeholder="e.g. CR-V"></div>
+          </div>
+          <div class="grid3">
+            <div class="field"><label>New or used</label><select id="w-cond"><option value="either">Either</option><option value="new">New</option><option value="used">Used</option></select></div>
+            <div class="field"><label>Year (from)</label><input type="number" id="w-ymin" min="1990" max="2100" placeholder="2021"></div>
+            <div class="field"><label>Year (to)</label><input type="number" id="w-ymax" min="1990" max="2100" placeholder="2024"></div>
+          </div>
+        </div>
+        <button class="btn btn-accent btn-block" type="submit" id="s-btn" style="margin-top:6px">Submit my car</button>
+      </form>
+
+      <div style="margin-top:26px">
+        <h3 style="font-size:16px;margin:0 0 6px">Your submissions</h3>
+        <div id="sell-list"><div class="empty">Loading…</div></div>
+      </div>
+    </div>
+  </div>
+
+</div></div>
+
+<footer class="site"><div class="wrap">
+  <img src="spikercars-logo.png" alt="SpikerCars">
+  <div>SpikerCars · SNS Enterprises LLC · Dealer Acquisition Specialist · spikercars.com</div>
+</div></footer>
+
+<script type="module">
+import { sb, $, vNum, money, escapeHtml, showMsg, clearMsg, getUser, loadProfile, signOut, openModal, closeModal, removeSubmission } from './sc.js';
+
+const authCard = $('auth-card'), appCard = $('app-card');
+let profile = null, decoded = {};
+
+$('to-signup').onclick = () => { $('signin-form').classList.add('hidden'); $('signup-form').classList.remove('hidden'); clearMsg($('auth-msg')); };
+$('to-signin').onclick = () => { $('signup-form').classList.add('hidden'); $('signin-form').classList.remove('hidden'); clearMsg($('auth-msg')); };
+if (location.hash === '#signup') $('to-signup').click();
+
+$('signup-form').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const btn = $('su-btn'); btn.disabled = true; btn.innerHTML = '<span class="spin"></span>Creating…';
+  clearMsg($('auth-msg'));
+  const { data, error } = await sb.auth.signUp({
+    email: $('su-email').value.trim(),
+    password: $('su-pass').value,
+    options: { data: {
+      first_name: $('su-first').value.trim(),
+      last_name: $('su-last').value.trim(),
+      phone: $('su-phone').value.trim(),
+      account_type: 'consumer'
+    }}
+  });
+  btn.disabled = false; btn.textContent = 'Create your account';
+  if (error){ showMsg($('auth-msg'), error.message, 'err'); return; }
+  if (!data.session){ showMsg($('auth-msg'), 'Account created. Check your email to confirm, then log in.', 'ok'); $('to-signin').click(); }
+  else await onSignedIn();
+});
+
+$('signin-form').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const btn = $('si-btn'); btn.disabled = true; btn.innerHTML = '<span class="spin"></span>Logging in…';
+  clearMsg($('auth-msg'));
+  const { error } = await sb.auth.signInWithPassword({ email: $('si-email').value.trim(), password: $('si-pass').value });
+  btn.disabled = false; btn.textContent = 'Log in';
+  if (error){ showMsg($('auth-msg'), error.message, 'err'); return; }
+  await onSignedIn();
+});
+
+$('logout-btn').onclick = () => signOut('index.html');
+
+async function onSignedIn(){
+  const user = await getUser();
+  if (!user){ renderLoggedOut(); return; }
+  profile = await loadProfile(user);
+  if (profile.role !== 'consumer'){ location.href = 'dealer.html'; return; }
+  authCard.classList.add('hidden'); appCard.classList.remove('hidden');
+  $('hello').textContent = 'Welcome' + (profile.first_name ? ', ' + profile.first_name : '');
+  $('hello-sub').textContent = profile.email || user.email;
+  await loadSellSubmissions();
+}
+function renderLoggedOut(){ authCard.classList.remove('hidden'); appCard.classList.add('hidden'); }
+
+$('vin-lookup').addEventListener('click', async () => {
+  const vin = $('s-vin').value.trim();
+  if (vin.length < 11){ showMsg($('app-msg'), 'Enter a valid VIN (at least 11 characters).', 'err'); return; }
+  clearMsg($('app-msg'));
+  const btn = $('vin-lookup'); btn.disabled = true; btn.textContent = 'Looking up…';
+  try {
+    const r = await fetch(`https://vpic.nhtsa.dot.gov/api/vehicles/DecodeVinValues/${encodeURIComponent(vin)}?format=json`);
+    const j = await r.json(); const d = (j.Results && j.Results[0]) || {};
+    decoded = { year: d.ModelYear || null, make: d.Make || null, model: d.Model || null, trim: d.Trim || null };
+    const label = [decoded.year, decoded.make, decoded.model, decoded.trim].filter(Boolean).join(' ');
+    $('vin-result').innerHTML = decoded.make ? ('<strong>' + escapeHtml(label) + '</strong>') : '<span class="muted">We couldn\'t decode that VIN — you can still submit and we\'ll verify it.</span>';
+    $('vin-result').classList.remove('hidden');
+  } catch (e) {
+    $('vin-result').innerHTML = '<span class="muted">VIN lookup is unavailable right now — you can still submit.</span>';
+    $('vin-result').classList.remove('hidden');
+  }
+  btn.disabled = false; btn.textContent = 'Look up VIN';
+});
+
+document.querySelectorAll('input[name="s-replace"]').forEach(r => r.addEventListener('change', () => {
+  const yes = document.querySelector('input[name="s-replace"]:checked').value === 'yes';
+  $('replace-wrap').classList.toggle('hidden', !yes);
+}));
+
+$('sell-form').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const cond = $('s-cond').value;
+  if (!cond){ showMsg($('app-msg'), 'Please rate the condition from 1 to 10.', 'err'); return; }
+  const btn = $('s-btn'); btn.disabled = true; btn.innerHTML = '<span class="spin"></span>Submitting…';
+  clearMsg($('app-msg'));
+  const wantsReplace = document.querySelector('input[name="s-replace"]:checked').value === 'yes';
+  const row = {
+    vin: $('s-vin').value.trim(),
+    year: decoded.year ? Number(decoded.year) : null,
+    make: decoded.make || null, model: decoded.model || null, trim: decoded.trim || null,
+    mileage: vNum($('s-miles').value),
+    condition_score: Number(cond),
+    tires_replace: $('s-tires').value === 'yes',
+    windshield_replace: $('s-wind').value === 'yes',
+    wants_replacement: wantsReplace,
+    want_make: wantsReplace ? ($('w-make').value.trim() || null) : null,
+    want_model: wantsReplace ? ($('w-model').value.trim() || null) : null,
+    want_condition: wantsReplace ? $('w-cond').value : null,
+    want_year_min: wantsReplace ? vNum($('w-ymin').value) : null,
+    want_year_max: wantsReplace ? vNum($('w-ymax').value) : null
+  };
+  const { data: inserted, error } = await sb.from('sell_submissions').insert(row).select('id').single();
+  btn.disabled = false; btn.textContent = 'Submit my car';
+  if (error){ showMsg($('app-msg'), error.message, 'err'); return; }
+  if (inserted) sb.functions.invoke('notify-sell', { body: { record_id: inserted.id } }).catch(()=>{});
+  showMsg($('app-msg'), 'Thanks! Your car is in. We\'ll review it and get back to you with an offer.', 'ok');
+  $('sell-form').reset(); $('vin-result').classList.add('hidden'); $('replace-wrap').classList.add('hidden'); decoded = {};
+  await loadSellSubmissions();
+});
+
+let sellRows = [];
+async function loadSellSubmissions(){
+  const el = $('sell-list');
+  const { data, error } = await sb.from('sell_submissions').select('*').order('created_at', { ascending:false });
+  if (error){ el.innerHTML = '<div class="empty">Could not load: ' + escapeHtml(error.message) + '</div>'; return; }
+  if (!data || !data.length){ el.innerHTML = '<div class="empty">No cars submitted yet.</div>'; return; }
+  sellRows = data;
+  el.innerHTML = `<div class="rowhint"><span class="chev">▸</span> Tap a car to see the details or remove it.</div>` + data.map((s,i) => {
+    const label = [s.year, s.make, s.model, s.trim].filter(Boolean).join(' ') || s.vin || 'Vehicle';
+    const status = (s.status || 'received').replace(/_/g, ' ');
+    const sub = [ s.mileage ? Number(s.mileage).toLocaleString() + ' mi' : '', s.condition_score ? 'Condition ' + s.condition_score + '/10' : '' ].filter(Boolean).join(' · ');
+    return `<div class="veh-item clickable" data-idx="${i}"><div><div class="vi-main">${escapeHtml(label)}</div>${sub ? '<div class="vi-sub">' + escapeHtml(sub) + '</div>' : ''}</div><span class="statuschip">${escapeHtml(status)}</span></div>`;
+  }).join('');
+  el.querySelectorAll('.veh-item.clickable').forEach(d => d.addEventListener('click', () => openDetail(sellRows[Number(d.dataset.idx)])));
+}
+
+function drow(l,v){ return v==null||v===''?'':`<div class="drow"><span class="l">${escapeHtml(l)}</span><span class="v">${escapeHtml(String(v))}</span></div>`; }
+function openDetail(s){
+  const label = [s.year, s.make, s.model, s.trim].filter(Boolean).join(' ') || s.vin || 'Vehicle';
+  const status = (s.status || 'received').replace(/_/g,' ');
+  const canRemove = s.status !== 'withdrawn';
+  let rows = drow('VIN', s.vin) + drow('Mileage', s.mileage ? Number(s.mileage).toLocaleString()+' mi' : '') +
+    drow('Condition', s.condition_score ? s.condition_score+' / 10' : '') +
+    drow('Tires need replacing', s.tires_replace ? 'Yes':'No') + drow('Windshield need replacing', s.windshield_replace ? 'Yes':'No') +
+    drow('Replacing this car', s.wants_replacement ? 'Yes':'No');
+  if (s.wants_replacement) rows += drow('Looking to buy', [[s.want_year_min,s.want_year_max].filter(Boolean).join('–'), s.want_make, s.want_model, (s.want_condition&&s.want_condition!=='either'?'('+s.want_condition+')':'')].filter(Boolean).join(' '));
+  rows += drow('Status', status) + drow('Submitted', new Date(s.created_at).toLocaleString([], { dateStyle:'medium', timeStyle:'short' }));
+  const foot = canRemove
+    ? `<button class="btn btn-danger" id="md-remove">Remove submission</button><button class="btn btn-primary" id="md-close">Close</button>`
+    : `<button class="btn btn-primary" id="md-close">Close</button>`;
+  const card = openModal(`
+    <div class="modal-head"><div class="k">Your car · ${escapeHtml(status)}</div><h3>${escapeHtml(label)}</h3></div>
+    <div class="modal-body">${rows}</div>
+    <div class="modal-foot ${canRemove?'':'one'}">${foot}</div>`);
+  card.querySelector('#md-close').addEventListener('click', closeModal);
+  const rm = card.querySelector('#md-remove');
+  if (rm) rm.addEventListener('click', () => confirmRemove(s));
+}
+function confirmRemove(s){
+  const card = openModal(`
+    <div class="confirm-card">
+      <h3>Remove this submission?</h3>
+      <p>The SpikerCars team will be notified, and you'll get a confirmation email. This can't be undone.</p>
+      <div class="confirm-row"><button class="btn btn-primary" id="cf-cancel">Cancel</button><button class="btn btn-danger" id="cf-go">Remove</button></div>
+    </div>`);
+  card.querySelector('#cf-cancel').addEventListener('click', () => openDetail(s));
+  card.querySelector('#cf-go').addEventListener('click', async () => {
+    const go = card.querySelector('#cf-go'); go.disabled = true; go.innerHTML = '<span class="spin"></span>Removing…';
+    try {
+      await removeSubmission('consumer', s.id);
+      closeModal();
+      showMsg($('app-msg'), 'Removed. A confirmation email is on its way.', 'ok');
+      await loadSellSubmissions();
+    } catch (err){
+      go.disabled = false; go.textContent = 'Remove';
+      closeModal(); showMsg($('app-msg'), 'Could not remove: ' + err.message, 'err');
+    }
+  });
+}
+
+(async () => {
+  const { data: { session } } = await sb.auth.getSession();
+  if (session) await onSignedIn(); else renderLoggedOut();
+})();
+</script>
+</body>
+</html>

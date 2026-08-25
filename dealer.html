@@ -250,7 +250,7 @@ async function onSignedIn(){
   const user = await getUser();
   if (!user){ renderLoggedOut(); return; }
   profile = await loadProfile(user);
-  if (profile.role === 'consumer'){ location.href = 'sell.html'; return; }
+  if (profile.role === 'consumer'){ location.href = 'garage.html'; return; }
   isAdmin = profile.role === 'admin';
   authCard.classList.add('hidden'); appCard.classList.remove('hidden');
   $('hello').textContent = 'Welcome' + (profile.first_name ? ', ' + profile.first_name : '');
@@ -477,7 +477,7 @@ $('unit-form').addEventListener('submit', async (e) => {
 });
 
 // ================= ACTIVITY =================
-let activityRows = [];
+let activityRows = [], radioRows = [];
 const REM_TYPE = { buy:'buy', sell:'dealer_sell', consumer:'consumer' };
 
 function buyVeh(r){ return [ [r.year_min,r.year_max].filter(Boolean).join('–'), r.make, r.model, r.trim ].filter(Boolean).join(' ') || 'Any vehicle'; }
@@ -493,20 +493,20 @@ async function loadActivity(){
   if (isAdmin){
     queries.push(sb.from('sell_submissions').select('*').order('created_at', { ascending:false }));
     queries.push(sb.from('profiles').select('id,first_name,last_name,dealership,email,phone'));
+    queries.push(sb.from('radio_leads').select('*').order('created_at', { ascending:false }));
   }
   const results = await Promise.all(queries);
   const buys = results[0].data || [], sells = results[1].data || [];
   const consumers = isAdmin ? (results[2].data || []) : [];
   const profMap = {};
   if (isAdmin) (results[3].data || []).forEach(p => profMap[p.id] = p);
+  radioRows = isAdmin ? (results[4].data || []) : [];
 
   activityRows = [];
   buys.forEach(r => activityRows.push({ t:'buy', label:'Buy', veh:buyVeh(r), detail:[ r.quantity ? r.quantity+' unit'+(r.quantity>1?'s':'') : '', r.mileage_max ? '≤'+Number(r.mileage_max).toLocaleString()+' mi' : '', r.budget_max ? money(r.budget_max) : '' ].filter(Boolean).join(' · '), status:r.status||'new', at:r.created_at, raw:r, prof:profMap[r.dealer_id] }));
   sells.forEach(u => activityRows.push({ t:'sell', label:'Dealer sell', veh:otherVeh(u), detail:[ 'Asking '+money(u.asking_price), u.mileage ? Number(u.mileage).toLocaleString()+' mi' : '' ].filter(Boolean).join(' · '), status:u.status||'new', at:u.created_at, raw:u, prof:profMap[u.dealer_id] }));
   consumers.forEach(s => activityRows.push({ t:'consumer', label:'Consumer', veh:otherVeh(s), detail:[ s.mileage ? Number(s.mileage).toLocaleString()+' mi' : '', s.condition_score ? 'Cond '+s.condition_score+'/10' : '', s.wants_replacement ? 'wants replacement' : '' ].filter(Boolean).join(' · '), status:s.status||'received', at:s.created_at, raw:s, prof:profMap[s.user_id] }));
   activityRows.sort((a,b) => new Date(b.at) - new Date(a.at));
-
-  if (!activityRows.length){ el.innerHTML = '<div class="empty">No activity yet. Send a buy list or list a unit to sell.</div>'; return; }
 
   const whoCell = (r) => {
     const p = r.prof || {};
@@ -515,17 +515,63 @@ async function loadActivity(){
     return `<div class="who-name">${escapeHtml(p.dealership || 'Dealer')}</div>${nm ? '<div class="who-sub">'+escapeHtml(nm)+'</div>' : ''}`;
   };
   const cols = isAdmin ? ['Type','Vehicle','Submitted by','Detail','Status','Date'] : ['Type','Vehicle','Detail','Status','Date'];
-  el.innerHTML = `<div class="rowhint"><span class="chev">▸</span> Click any row to open the full details.</div>` +
-    `<table class="req"><thead><tr>${cols.map(c=>`<th>${c}</th>`).join('')}</tr></thead><tbody>` +
-    activityRows.map((r,i) => `<tr class="clickable" data-idx="${i}">
-      <td><span class="typechip ${r.t}">${escapeHtml(r.label)}</span></td>
-      <td><b>${escapeHtml(r.veh)}</b></td>
-      ${isAdmin ? '<td>'+whoCell(r)+'</td>' : ''}
-      <td class="muted">${escapeHtml(r.detail)}</td>
-      <td><span class="status ${escapeHtml(r.status)}">${escapeHtml(String(r.status).replace(/_/g,' '))}</span></td>
-      <td class="muted">${new Date(r.at).toLocaleDateString()}</td>
-    </tr>`).join('') + `</tbody></table>`;
-  el.querySelectorAll('tr.clickable').forEach(tr => tr.addEventListener('click', () => openDetail(activityRows[Number(tr.dataset.idx)])));
+
+  // ----- main activity table (buy / dealer-sell / consumer) -----
+  let mainHtml;
+  if (!activityRows.length){
+    mainHtml = '<div class="empty">No dealer activity yet.</div>';
+  } else {
+    mainHtml = `<div class="rowhint"><span class="chev">▸</span> Click any row to open the full details.</div>` +
+      `<table class="req"><thead><tr>${cols.map(c=>`<th>${c}</th>`).join('')}</tr></thead><tbody>` +
+      activityRows.map((r,i) => `<tr class="clickable" data-act="${i}">
+        <td><span class="typechip ${r.t}">${escapeHtml(r.label)}</span></td>
+        <td><b>${escapeHtml(r.veh)}</b></td>
+        ${isAdmin ? '<td>'+whoCell(r)+'</td>' : ''}
+        <td class="muted">${escapeHtml(r.detail)}</td>
+        <td><span class="status ${escapeHtml(r.status)}">${escapeHtml(String(r.status).replace(/_/g,' '))}</span></td>
+        <td class="muted">${new Date(r.at).toLocaleDateString()}</td>
+      </tr>`).join('') + `</tbody></table>`;
+  }
+
+  // ----- separate radio-show leads table (admin only) -----
+  let radioHtml = '';
+  if (isAdmin){
+    const veh = (l) => [l.year,l.make,l.model].filter(Boolean).join(' ') || '—';
+    const body = radioRows.length
+      ? `<table class="req"><thead><tr><th>Name</th><th>Phone</th><th>Vehicle</th><th>Mileage</th><th>Status</th><th>Date</th></tr></thead><tbody>` +
+        radioRows.map((l,i) => `<tr class="clickable" data-radio="${i}">
+          <td><b>${escapeHtml([l.first_name,l.last_name].filter(Boolean).join(' ') || '—')}</b></td>
+          <td>${escapeHtml(l.phone || '—')}</td>
+          <td>${escapeHtml(veh(l))}</td>
+          <td class="muted">${l.mileage ? Number(l.mileage).toLocaleString()+' mi' : '—'}</td>
+          <td><span class="status ${escapeHtml(l.status||'new')}">${escapeHtml(String(l.status||'new').replace(/_/g,' '))}</span></td>
+          <td class="muted">${new Date(l.created_at).toLocaleDateString()}</td>
+        </tr>`).join('') + `</tbody></table>`
+      : '<div class="empty">No radio-show leads yet.</div>';
+    radioHtml = `<div style="margin-top:34px">
+      <h3 style="margin:0 0 4px">Sell to Spiker — radio leads</h3>
+      <p class="lead">Ungated leads from the /sell landing page. Kept separate from account submissions.</p>
+      ${body}</div>`;
+  }
+
+  el.innerHTML = mainHtml + radioHtml;
+  el.querySelectorAll('tr[data-act]').forEach(tr => tr.addEventListener('click', () => openDetail(activityRows[Number(tr.dataset.act)])));
+  el.querySelectorAll('tr[data-radio]').forEach(tr => tr.addEventListener('click', () => openRadioDetail(radioRows[Number(tr.dataset.radio)])));
+}
+
+function openRadioDetail(l){
+  const veh = [l.year,l.make,l.model].filter(Boolean).join(' ') || 'Vehicle not specified';
+  const name = [l.first_name,l.last_name].filter(Boolean).join(' ') || '—';
+  const rows = drow('Name', name) + drow('Phone', l.phone) + drow('Vehicle', veh) +
+    drow('Mileage', l.mileage ? Number(l.mileage).toLocaleString()+' mi' : '') +
+    drow('Notes', l.notes) + drow('Source', 'Radio landing page (/sell)') +
+    drow('Status', String(l.status||'new').replace(/_/g,' ')) +
+    drow('Submitted', new Date(l.created_at).toLocaleString([], { dateStyle:'medium', timeStyle:'short' }));
+  const card = openModal(`
+    <div class="modal-head"><div class="k">Radio lead · ${escapeHtml(String(l.status||'new').replace(/_/g,' '))}</div><h3>${escapeHtml(name)}</h3></div>
+    <div class="modal-body">${rows}</div>
+    <div class="modal-foot one"><button class="btn btn-primary" id="md-close">Close</button></div>`);
+  card.querySelector('#md-close').addEventListener('click', closeModal);
 }
 
 // ---------- detail modal + remove ----------
