@@ -250,7 +250,7 @@ async function onSignedIn(){
   const user = await getUser();
   if (!user){ renderLoggedOut(); return; }
   profile = await loadProfile(user);
-  if (profile.role === 'consumer'){ location.href = 'garage.html'; return; }
+  if (profile.role === 'consumer'){ location.href = 'sell-my-car.html'; return; }
   isAdmin = profile.role === 'admin';
   authCard.classList.add('hidden'); appCard.classList.remove('hidden');
   $('hello').textContent = 'Welcome' + (profile.first_name ? ', ' + profile.first_name : '');
@@ -563,6 +563,7 @@ function openRadioDetail(l){
   const veh = [l.year,l.make,l.model].filter(Boolean).join(' ') || 'Vehicle not specified';
   const name = [l.first_name,l.last_name].filter(Boolean).join(' ') || '—';
   const rows = drow('Name', name) + drow('Phone', l.phone) + drow('Vehicle', veh) +
+    drow('VIN', l.vin) +
     drow('Mileage', l.mileage ? Number(l.mileage).toLocaleString()+' mi' : '') +
     drow('Notes', l.notes) + drow('Source', 'Radio landing page (/sell)') +
     drow('Status', String(l.status||'new').replace(/_/g,' ')) +
