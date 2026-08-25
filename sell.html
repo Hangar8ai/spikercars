@@ -72,7 +72,7 @@
           </div>
           <div class="grid2">
             <div class="field"><label>Mileage</label><input type="number" id="rl-miles" min="0" placeholder="e.g. 62,000"></div>
-            <div class="field"><label>VIN <span class="muted" style="font-weight:400">(optional)</span></label><input type="text" id="rl-vin" maxlength="17" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="17-character VIN" style="text-transform:uppercase"></div>
+            <div class="field"><label>VIN <span class="req">*</span></label><input type="text" id="rl-vin" maxlength="17" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="17-character VIN" style="text-transform:uppercase" required></div>
           </div>
           <div class="field"><label>Anything else? <span class="muted" style="font-weight:400">(optional)</span></label><textarea id="rl-notes" rows="2" placeholder="Condition, extras, when you're looking to sell…"></textarea></div>
           <input type="text" id="rl-company" class="hp" tabindex="-1" autocomplete="off" aria-hidden="true">
@@ -129,7 +129,9 @@ $('rl-form').addEventListener('submit', async (e) => {
   e.preventDefault();
   const phone = $('rl-phone').value.trim();
   const first = $('rl-first').value.trim();
+  const vin = $('rl-vin').value.trim();
   if (!phone){ showMsg($('lead-msg'), 'Please add a phone number so Spiker can reach you.', 'err'); return; }
+  if (!vin){ showMsg($('lead-msg'), 'Please add your VIN so Spiker can look up your car.', 'err'); $('rl-vin').focus(); return; }
   const btn = $('rl-btn'); btn.disabled = true; btn.innerHTML = '<span class="spin"></span>Sending…';
   clearMsg($('lead-msg'));
   const body = {
