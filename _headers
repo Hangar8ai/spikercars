@@ -1,0 +1,5 @@
+# Keep the Cloudflare preview hostname out of Google so it never competes with spikercars.com
+https://spikercars.pages.dev/*
+  X-Robots-Tag: noindex
+https://:version.spikercars.pages.dev/*
+  X-Robots-Tag: noindex
