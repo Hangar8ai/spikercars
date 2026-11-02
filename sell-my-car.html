@@ -194,10 +194,10 @@ $('vin-lookup').addEventListener('click', async () => {
     const j = await r.json(); const d = (j.Results && j.Results[0]) || {};
     decoded = { year: d.ModelYear || null, make: d.Make || null, model: d.Model || null, trim: d.Trim || null };
     const label = [decoded.year, decoded.make, decoded.model, decoded.trim].filter(Boolean).join(' ');
-    $('vin-result').innerHTML = decoded.make ? ('<strong>' + escapeHtml(label) + '</strong>') : '<span class="muted">We couldn\'t decode that VIN — you can still submit and we\'ll verify it.</span>';
+    $('vin-result').innerHTML = decoded.make ? ('<strong>' + escapeHtml(label) + '</strong>') : '<span class="muted">We couldn\'t decode that VIN. You can still submit and we\'ll verify it.</span>';
     $('vin-result').classList.remove('hidden');
   } catch (e) {
-    $('vin-result').innerHTML = '<span class="muted">VIN lookup is unavailable right now — you can still submit.</span>';
+    $('vin-result').innerHTML = '<span class="muted">VIN lookup is unavailable right now. You can still submit.</span>';
     $('vin-result').classList.remove('hidden');
   }
   btn.disabled = false; btn.textContent = 'Look up VIN';

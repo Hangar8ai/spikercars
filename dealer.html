@@ -4,12 +4,12 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>SpikerCars | Dealer Portal</title>
-<meta name="description" content="SpikerCars dealer portal — send your buy list, sell aged units, and track everything in one place.">
+<meta name="description" content="SpikerCars dealer portal. Send your buy list, sell aged units, and track everything in one place.">
 <link rel="canonical" href="https://spikercars.com/dealer">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="SpikerCars">
 <meta property="og:title" content="SpikerCars | Dealer Portal">
-<meta property="og:description" content="SpikerCars dealer portal — send your buy list, sell aged units, and track everything in one place.">
+<meta property="og:description" content="SpikerCars dealer portal. Send your buy list, sell aged units, and track everything in one place.">
 <meta property="og:url" content="https://spikercars.com/dealer">
 <meta property="og:image" content="https://spikercars.com/spikercars-logo.png">
 <meta name="twitter:card" content="summary">
@@ -130,7 +130,7 @@
 
         <!-- QUICK LIST -->
         <div id="buy-quick" class="hidden">
-          <p class="lead">Buying a lot at once? Keep it to the essentials — one line per vehicle, no deep specs. Switch to <b>Detailed</b> anytime to be specific.</p>
+          <p class="lead">Buying a lot at once? Keep it to the essentials: one line per vehicle, no deep specs. Switch to <b>Detailed</b> anytime to be specific.</p>
           <div style="overflow-x:auto">
             <table class="ql">
               <thead><tr><th style="width:26%">Make</th><th style="width:32%">Model</th><th class="ql-yr" style="width:20%">Year(s)</th><th style="width:14%">Units</th><th style="width:8%"></th></tr></thead>
@@ -138,7 +138,7 @@
             </table>
           </div>
           <button type="button" class="ql-add" id="ql-add">+ Add row</button>
-          <textarea class="paste" id="ql-paste" rows="2" placeholder='Or paste a list — e.g. "Ford F-150 x10, Toyota RAV4 x8, Chevy Silverado x6" — then click Parse.'></textarea>
+          <textarea class="paste" id="ql-paste" rows="2" placeholder='Or paste a list, e.g. "Ford F-150 x10, Toyota RAV4 x8, Chevy Silverado x6", then click Parse.'></textarea>
           <div class="form-actions">
             <button class="btn btn-outline" type="button" id="ql-parse">Parse pasted list</button>
             <button class="btn btn-accent" type="button" id="ql-submit">Submit list to the SpikerCars team</button>
@@ -149,7 +149,7 @@
       <!-- ======= SELL CARS ======= -->
       <div id="tab-sell" class="tabpane hidden">
         <h3>Sell your aged units to the SpikerCars team</h3>
-        <p class="lead">Got units sitting on the lot? List them here — often more than the lane, without the auction hassle. Add each unit with your asking price, then send them over.</p>
+        <p class="lead">Got units sitting on the lot? List them here. Often more than the lane, without the auction hassle. Add each unit with your asking price, then send them over.</p>
         <div id="unit-list"></div>
         <form id="unit-form">
           <div class="grid2">
@@ -171,7 +171,7 @@
             </div>
             <div class="field"></div>
           </div>
-          <div class="field"><label>Notes</label><textarea id="u-notes" rows="2" placeholder="Anything the team should know — reconditioning, history, etc."></textarea></div>
+          <div class="field"><label>Notes</label><textarea id="u-notes" rows="2" placeholder="Anything the team should know: reconditioning, history, etc."></textarea></div>
           <div class="form-actions">
             <button class="btn btn-outline" type="button" id="add-unit-btn">+ Add another unit</button>
             <button class="btn btn-accent" type="submit" id="u-btn">Send units to the SpikerCars team</button>
@@ -183,7 +183,7 @@
       <!-- ======= ACTIVITY ======= -->
       <div id="tab-activity" class="tabpane hidden">
         <h3 id="activity-title">Your activity</h3>
-        <p class="lead">Everything you've sent us — buy requests and units for sale — with current status.</p>
+        <p class="lead">Everything you've sent us, buy requests and units for sale, with current status.</p>
         <div id="act-list"><div class="empty">Loading…</div></div>
       </div>
 
@@ -263,7 +263,7 @@ async function onSignedIn(){
   $('hello-sub').textContent = (profile.dealership ? profile.dealership + ' · ' : '') + (profile.email || user.email);
   $('role-chip').textContent = isAdmin ? 'Admin' : 'Dealer';
   $('role-chip').className = 'rolechip' + (isAdmin ? ' admin' : '');
-  // admins review only — hide submit tabs, show activity (all)
+  // admins review only; hide submit tabs, show activity (all)
   $('tab-btn-buy').classList.toggle('hidden', isAdmin);
   $('tab-btn-sell').classList.toggle('hidden', isAdmin);
   $('activity-title').textContent = isAdmin ? 'All dealer activity' : 'Your activity';
@@ -317,7 +317,7 @@ $('request-form').addEventListener('submit', async (e) => {
   if (error){ showMsg($('app-msg'), error.message, 'err'); return; }
   sb.functions.invoke('notify-new-request', { body: { batch_id } }).catch(()=>{});
   const totalUnits = all.reduce((n,v) => n + (v.quantity||1), 0);
-  showMsg($('app-msg'), `Buy list sent — ${all.length} vehicle${all.length>1?'s':''}, ${totalUnits} total unit${totalUnits>1?'s':''}. We'll get on it.`, 'ok');
+  showMsg($('app-msg'), `Buy list sent: ${all.length} vehicle${all.length>1?'s':''}, ${totalUnits} total unit${totalUnits>1?'s':''}. We'll get on it.`, 'ok');
   pendingVehicles = []; renderVehicleList(); clearVehicleForm();
 });
 
@@ -381,8 +381,8 @@ $('ql-parse').addEventListener('click', () => {
     qlAddRow({ make, model: words.join(' '), years, units });
     added++;
   });
-  if (added){ $('ql-paste').value=''; clearMsg($('app-msg')); showMsg($('app-msg'), `Added ${added} row${added>1?'s':''} — review and edit, then submit.`, 'ok'); }
-  else showMsg($('app-msg'), "Couldn't read that list — try one vehicle per line.", 'err');
+  if (added){ $('ql-paste').value=''; clearMsg($('app-msg')); showMsg($('app-msg'), `Added ${added} row${added>1?'s':''}. Review and edit, then submit.`, 'ok'); }
+  else showMsg($('app-msg'), "Couldn't read that list. Try one vehicle per line.", 'err');
 });
 $('ql-submit').addEventListener('click', async () => {
   const all = readQuickRows();
@@ -395,7 +395,7 @@ $('ql-submit').addEventListener('click', async () => {
   if (error){ showMsg($('app-msg'), error.message, 'err'); return; }
   sb.functions.invoke('notify-new-request', { body: { batch_id } }).catch(()=>{});
   const totalUnits = all.reduce((n,v) => n + (v.quantity||1), 0);
-  showMsg($('app-msg'), `Buy list sent — ${all.length} vehicle${all.length>1?'s':''}, ${totalUnits} total unit${totalUnits>1?'s':''}. We'll get on it.`, 'ok');
+  showMsg($('app-msg'), `Buy list sent: ${all.length} vehicle${all.length>1?'s':''}, ${totalUnits} total unit${totalUnits>1?'s':''}. We'll get on it.`, 'ok');
   $('ql-body').innerHTML=''; qlAddRow(); qlAddRow(); qlAddRow();
 });
 // seed quick list with a few empty rows
@@ -415,10 +415,10 @@ $('u-vin-lookup').addEventListener('click', async () => {
     const j = await r.json(); const d = (j.Results && j.Results[0]) || {};
     unitDecoded = { year: d.ModelYear || null, make: d.Make || null, model: d.Model || null, trim: d.Trim || null };
     const label = [unitDecoded.year, unitDecoded.make, unitDecoded.model, unitDecoded.trim].filter(Boolean).join(' ');
-    $('u-vin-result').innerHTML = unitDecoded.make ? ('<strong>' + escapeHtml(label) + '</strong>') : '<span class="muted">We couldn\'t decode that VIN — you can still add the unit and we\'ll verify it.</span>';
+    $('u-vin-result').innerHTML = unitDecoded.make ? ('<strong>' + escapeHtml(label) + '</strong>') : '<span class="muted">We couldn\'t decode that VIN. You can still add the unit and we\'ll verify it.</span>';
     $('u-vin-result').classList.remove('hidden');
   } catch (e) {
-    $('u-vin-result').innerHTML = '<span class="muted">VIN lookup is unavailable right now — you can still add the unit.</span>';
+    $('u-vin-result').innerHTML = '<span class="muted">VIN lookup is unavailable right now. You can still add the unit.</span>';
     $('u-vin-result').classList.remove('hidden');
   }
   btn.disabled = false; btn.textContent = 'Look up VIN';
@@ -478,7 +478,7 @@ $('unit-form').addEventListener('submit', async (e) => {
   btn.disabled = false; updateUnitBtn();
   if (error){ showMsg($('app-msg'), error.message, 'err'); return; }
   sb.functions.invoke('notify-dealer-sell', { body: { batch_id } }).catch(()=>{});
-  showMsg($('app-msg'), `Sent — ${all.length} unit${all.length>1?'s':''} on their way to the SpikerCars team. We'll come back with an offer.`, 'ok');
+  showMsg($('app-msg'), `Sent: ${all.length} unit${all.length>1?'s':''} on their way to the SpikerCars team. We'll come back with an offer.`, 'ok');
   pendingUnits = []; renderUnitList(); updateUnitBtn(); clearUnitForm();
 });
 
@@ -542,20 +542,20 @@ async function loadActivity(){
   // ----- separate radio-show leads table (admin only) -----
   let radioHtml = '';
   if (isAdmin){
-    const veh = (l) => [l.year,l.make,l.model].filter(Boolean).join(' ') || '—';
+    const veh = (l) => [l.year,l.make,l.model].filter(Boolean).join(' ') || '-';
     const body = radioRows.length
       ? `<table class="req"><thead><tr><th>Name</th><th>Phone</th><th>Vehicle</th><th>Mileage</th><th>Status</th><th>Date</th></tr></thead><tbody>` +
         radioRows.map((l,i) => `<tr class="clickable" data-radio="${i}">
-          <td><b>${escapeHtml([l.first_name,l.last_name].filter(Boolean).join(' ') || '—')}</b></td>
-          <td>${escapeHtml(l.phone || '—')}</td>
+          <td><b>${escapeHtml([l.first_name,l.last_name].filter(Boolean).join(' ') || '-')}</b></td>
+          <td>${escapeHtml(l.phone || '-')}</td>
           <td>${escapeHtml(veh(l))}</td>
-          <td class="muted">${l.mileage ? Number(l.mileage).toLocaleString()+' mi' : '—'}</td>
+          <td class="muted">${l.mileage ? Number(l.mileage).toLocaleString()+' mi' : '-'}</td>
           <td><span class="status ${escapeHtml(l.status||'new')}">${escapeHtml(String(l.status||'new').replace(/_/g,' '))}</span></td>
           <td class="muted">${new Date(l.created_at).toLocaleDateString()}</td>
         </tr>`).join('') + `</tbody></table>`
       : '<div class="empty">No radio-show leads yet.</div>';
     radioHtml = `<div style="margin-top:34px">
-      <h3 style="margin:0 0 4px">Sell to Spiker — radio leads</h3>
+      <h3 style="margin:0 0 4px">Sell to Spiker: radio leads</h3>
       <p class="lead">Ungated leads from the /sell landing page. Kept separate from account submissions.</p>
       ${body}</div>`;
   }
@@ -567,7 +567,7 @@ async function loadActivity(){
 
 function openRadioDetail(l){
   const veh = [l.year,l.make,l.model].filter(Boolean).join(' ') || 'Vehicle not specified';
-  const name = [l.first_name,l.last_name].filter(Boolean).join(' ') || '—';
+  const name = [l.first_name,l.last_name].filter(Boolean).join(' ') || '-';
   const rows = drow('Name', name) + drow('Phone', l.phone) + drow('Vehicle', veh) +
     drow('VIN', l.vin) +
     drow('Mileage', l.mileage ? Number(l.mileage).toLocaleString()+' mi' : '') +
@@ -590,7 +590,7 @@ function detailRowsHtml(item){
   const submitted = new Date(r.created_at).toLocaleString([], { dateStyle:'medium', timeStyle:'short' });
   let rows = '';
   if (isAdmin){
-    rows += drow('Submitted by', item.t==='consumer' ? (nm||'Seller') : ((p.dealership||'Dealer') + (nm ? ' — '+nm : '')));
+    rows += drow('Submitted by', item.t==='consumer' ? (nm||'Seller') : ((p.dealership||'Dealer') + (nm ? ' · '+nm : '')));
     rows += drow('Contact', contact);
   }
   if (item.t === 'buy'){
