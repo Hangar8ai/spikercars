@@ -136,11 +136,13 @@ $('hero-logout').onclick = () => signOut('index.html');
   if (!session) return;
   const user = await getUser();
   const prof = await loadProfile(user);
+  const home = roleHome(prof.role);
+  // Signed-in users go straight to their dashboard. Portal "Home" links add ?home to view this page.
+  if (!new URLSearchParams(location.search).has('home')) { location.replace(home); return; }
   $('signed-out').classList.add('hidden');
   $('signed-in').classList.remove('hidden');
   $('si-hello').textContent = 'Welcome back' + (prof.first_name ? ', ' + prof.first_name : '');
   $('si-hello-sub').textContent = (prof.dealership ? prof.dealership + ' · ' : '') + (prof.email || user.email);
-  const home = roleHome(prof.role);
   $('go-portal').href = home;
   $('go-portal').textContent = prof.role === 'consumer' ? 'Go to my seller portal' : 'Go to my dealer portal';
 })();
