@@ -1,5 +1,5 @@
 // SpikerCars shared client + helpers (ES module, imported by every page)
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+import { createClient } from './supabase-js.js'; // pinned 2.118.0, self-hosted (was esm.sh @2, unpinned)
 
 export const SUPABASE_URL = 'https://ihefyrwfgllieowplwok.supabase.co';
 export const SUPABASE_KEY = 'sb_publishable_d0yEM0iEhqBebg13XIZv1g_qm9jW2m9';
